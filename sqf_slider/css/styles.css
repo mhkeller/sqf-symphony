@@ -1,0 +1,160 @@
+html,body{
+  height:100%;
+  overflow:hidden;
+  margin:0;
+  padding:0;
+}
+
+#map_canvas{
+  background:#D8DEE6;
+  top:40px;
+  width:700px;
+  height:800px;
+  float:left;
+}
+
+#loader{
+  width:200px;
+  position:absolute;
+  top:50px;
+  z-index:1000;
+  left:50%;
+  margin:auto auto auto -100px;
+  padding:10px;
+}
+
+#legend{
+  background:#FFF;
+  width:200px;
+  position:absolute;
+  z-index:1000;
+  display:none;
+  padding:10px;
+}
+
+.leaflet-marker-custom{
+  position:absolute;
+  border-radius:50%;
+  width:2px;
+  height:2px;
+  background-color:#F0F;
+  margin:0 auto;
+}
+
+.leaflet-marker-custom.final_marker{
+  width:5px!important;
+  height:5px!important;
+  display:none;
+}
+
+#slider{
+  margin-left:200px;
+  width:500px;
+  margin-top:-25px;
+}
+
+#demo-frame > div.demo{
+  padding:10px!important;
+}
+
+.leaflet-popup-tip,.leaflet-popup-close-button_custom,.leaflet-popup-tip-container_custom{
+  display:none;
+}
+
+#chart_canvas{
+	position:relative;
+  width:300px;
+  height:300px;
+  border:1px solid #ccc;
+  float:left;
+  margin-left:10px;
+  margin-right:10px;
+  margin-top:50px;
+}
+
+#x_axis{
+	position:relative;
+	width:25px;
+	height:270px;
+	margin-top:15px;
+	border-right:1px solid #bbbaba;
+	display:inline-block;
+}
+
+.bar_group{
+	position:relative;
+	width:35px;
+	height:269px;
+	margin-left:15px;
+	display:inline-block;
+}
+
+.first_line{
+	margin-left:10px !important;
+}
+
+.arst_bar{
+	left:0;
+}
+
+.stop_bar{
+	right:0;
+}
+
+.bar{
+	width:15px;
+	background-color:red;
+	height:2px;
+	position:absolute;
+	bottom:0;
+}
+
+#B_arst{
+	background-color:#E75a17;
+	opacity:.5;
+}
+
+#B_stop{
+	background-color:#E75a17;
+	
+}
+
+#H_arst{
+	background-color:#B52c38;
+	opacity:.5;	
+}
+
+#H_stop{
+	background-color:#B52c38;
+	
+}
+
+#W_arst{
+	background-color:#3485be;
+	opacity:.5;	
+}
+
+#W_stop{
+	background-color:#3485be;
+	
+}
+
+#A_arst{
+	background-color:#C72085;
+	opacity:.5;	
+}
+
+#A_stop{
+	background-color:#C72085;
+	
+}
+
+#X_arst{
+	background-color:#666869;
+	opacity:.5;	
+}
+
+#X_stop{
+	background-color:#666869;
+	
+}

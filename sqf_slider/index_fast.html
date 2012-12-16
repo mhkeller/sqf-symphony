@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test Map</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+
+  <link href="css/leaflet.css" rel="stylesheet" type="text/css" />
+  <link href="css/leaflet.ie.css" rel="stylesheet" type="text/css" />
+  <link  href="css/cartodb.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/styles.css" type="text/css" charset="utf-8">
+  <link type="text/css" href="css/smoothness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+
+  <script type="text/javascript" src="js/leaflet_chester.js"></script>
+  <script type="text/javascript" src="js/wax.leaflet.min.js"></script>
+  <script type="text/javascript" src="js/cartodb-leaflet.js"></script>
+  <script type="text/javascript" src="js/symphony.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+ 
+
+ 
+
+  <script type="text/javascript">
+    var cartodb_leaflet1
+      , cartodb_leaflet2
+      , cartodb_leaflet3;
+    var map 
+	var zoom = 12;
+	var mX;
+	var mY;
+	var pT;
+	var sign = "<";
+	var q = 0;
+	var i = 0;
+	var len = 10;
+	var ExplodeFeatures
+	var ExplodeFeaturesProp;
+	var ExplodeFeaturesGeom;
+	var realTime;
+	var unix_timeStamp;
+	var interval;
+	var thisSound;
+	var animate_height;
+	var counter = 0 ;
+	var this_bar;
+	var bar_1;
+    var bar_2;
+	var bar_3;
+	var bar_4;
+	var bar_5;
+	var bar_array;
+	
+	
+	//$( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) );
+
+	
+	function createJSONLists(){
+		var polygons_url = "https://thenyworld.cartodb.com/api/v2/sql?q=select race,uid,unix_time,the_geom as the_geom from sqf_douglas_y_nonas&format=geojson";
+
+		$.getJSON(polygons_url, function(data) {
+	    	ExplodeFeatures = data.features;
+		
+			
+			//console.log(ExplodeFeatures)
+
+		
+		});
+	}
+	
+	
+	//creates and simplifies the geometry of mouseover polygons
+    function create_polygons(ready) {
+        var polygons =  {};
+		var polygons_url = 'https://thenyworld.cartodb.com/api/v2/sql?q=select mj_stops,ST_Transform(ST_Buffer(the_geom,0.001),3857) as the_geom_webmercator from sqf_dan_total&format=geojson';
+       
+        $.getJSON(polygons_url, function(data) {
+            var geojson = new L.GeoJSON();
+            var features = data.features;
+            for (var i = 0, len = features.length; i < len; ++i) {
+              var pol = new Object();
+              var geo = L.GeoJSON.geometryToLayer(features[i].geometry);
+
+              geo.setStyle({
+                weight: 4,
+                color: 'orange',
+                opacity: 1,
+                fillColor: 'orange',
+                fillOpacity: .75
+				
+              });
+						
+              pol.geo = geo;
+              pol.prop = features[i].properties;
+			
+              var key = features[i].properties.uid;
+			
+              if(polygons[key]) {
+                polygons[key].push(pol);
+              } else {
+                polygons[key] = [pol];
+              }
+
+            }
+            ready(polygons);
+        });
+        
+    }
+
+    function init_map(polygons) {
+        var current_polygon = null; 
+		
+		
+		map = new L.Map('map_canvas').setView(new L.LatLng(40.81835626689008, -73.91447067260742), zoom);
+		//var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-streets/{z}/{x}/{y}.png',
+		var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/cartodb.map-1nh578vv/{z}/{x}/{y}.png',
+        	mapbox = new L.TileLayer(mapboxUrl, {maxZoom: 16,attribution:"Powered by Leaflet and Mapbox"});
+        map.addLayer(mapbox,true);
+
+		 
+		var lW = $('#legend').width();
+		var lH = $('#legend').height();
+		$("#map_canvas").mousemove(function(e){
+			mX = e.pageX + lW/2 - 15;
+			mY = e.pageY - lH/2;
+			pT++;
+		});
+		
+		$("#legend").hover(function(){
+			$(this).hide();
+		});
+
+        var legend = {
+          out: function() {
+              $('div.over').hide();
+				if (pT > 3){
+              		$("#legend").hide();
+				}
+          },
+
+          over: function(feature, div, opt3, evt){
+			pT = 0;
+            $('div.over').text(feature).show();
+            $('div.over').tooltip('show')
+            featureAttributes = feature
+           	//console.log(featureAttributes)
+			//console.log(featureAttributes)
+                        
+            //["uid", "arstmade", "daystop", "monthstop", "race"]
+            $("#datestop").text(featureAttributes);
+            //$("#race").text(featureAttributes[0]);
+            //$("#arstmade").text(featureAttributes[1]);
+
+            $("#legend").css({"top": mY + "px",'left': mX + "px"}).show();
+			
+
+        }
+      }
+
+      // options to control events on geometries
+      var waxOptions = {
+          callbacks: {
+            out: function(){
+                if(current_polygon) {
+                  for(var i=0; i < current_polygon.length; ++i) {
+                    map.removeLayer(current_polygon[i].geo);
+                  }
+                  current_polygon = null;
+                }
+                legend.out();
+            },
+            over: function(feature, div, opt3, evt){
+				//console.log(feature)
+                legend.over(feature, div, opt3, evt);
+					
+                var key = feature
+                //current_polygon = polygons[key];
+
+                // for(var i=0; i < current_polygon.length; ++i) {
+                //                    map.addLayer(current_polygon[i].geo);
+                // 
+                //                }
+            },
+            click: function(feature, div, op3, evt) {
+            }
+          },
+      };
+
+
+
+	  	  // 
+	  	  //         cartodb_leaflet2 = new L.CartoDBLayer({
+	  	  //           map_canvas: 'map_canvas',
+	  	  //           map: map,
+	  	  //           user_name:"thenyworld",
+	  	  //           table_name: 'sqf_dan_total',
+	  	  //           infowindow: false,
+	  	  //           query: "SELECT * FROM {{table_name}}",
+	  	  //   tile_style: "#{{table_name}}polygon-opacity: 0.7;line-opacity:1;line-width:15;line-color: transparent;[race = 'P'] {polygon-fill: green;}[race = 'W'] {polygon-fill: lightblue;}[race = 'Q'] {polygon-fill: magenta;}[race = 'B'] {polygon-fill: orange;}[race = 'Z'] {polygon-fill: purple;}[race = 'U'] {polygon-fill: pink;}[race = 'A'] {polygon-fill: red;}[race = 'I'] {polygon-fill: grey;}[race = 'X'] {polygon-fill: pink;}}",
+	  	  //           interactivity: ["mj_stops"],
+	  	  //           auto_bound: false,
+	  	  //           debug: false,
+	  	  //           waxOptions: waxOptions
+	  	  //         });
+        
+    }
+
+	
+
+ 
+
+$(document).ready(function() {
+	init_map();
+	createJSONLists();
+	bar_1 = $('#B_arst');
+    bar_2 = $('#A_arst');
+	bar_3 = $('#P_arst');
+	bar_4 = $('#X_arst');
+	bar_5 = $('#W_arst');
+	bar_array = [bar_1,bar_2,bar_3,bar_4,bar_5]
+	
+	
+	$( "#slider" ).slider({
+		value:1293861600,
+		min: 1293861600,
+		max: 1325397599,
+		step: 60,
+		slide: function( event, ui ) {
+			//$( "#amount" ).val( "$" + ui.value );
+			unix_timeStamp = ui.value;
+			
+
+			doThis();
+			//console.log(timeStamp)
+		}
+	});
+});
+
+    
+    function openfeature(feature) {
+        alert("sddsd");
+    }
+
+// 
+// function findWithAttr(array, attr, value) {
+// 	//console.log(array.length)
+//     for(var i = 0; i < array.length; i += 1) {
+// 		console.log(array[i][attr])
+//         if(array[i][attr] === value) {
+//             return i;
+//         }
+//     }
+// }
+
+
+
+//##############################
+//#Animate Chart
+//##############################
+
+
+// function deAnimateChart(){
+// 	$(this_bar).animate({
+// 		height: "-="+animate_height+"px"
+// 	},500,'easeInQuart');
+// 	//console.log($("#B_arst").css("height"))
+// }
+// 
+// 
+// function animateChart(){	
+// 	$(this_bar).animate({
+// 		height: "+="+animate_height+"px"
+// 	}, 300,'easeOutQuart', function(){
+// 		deAnimateChart();
+// 	})
+// 	//var t = window.setTimeout(deAnimateChart,100);		
+// }
+
+function timer(){
+	
+	interval = $("#slider").slider("value");
+	interval = interval + 60;
+	$("#slider").slider("value",interval)
+	
+	unix_timeStamp = interval;
+	
+	doThis();
+}
+
+function chartReduce(){
+
+	for (var i = 0; i < bar_array.length;i++){
+		if (bar_array[i].attr("title")){
+			var pool = bar_array[i].attr("title");
+			
+			if (pool > 0 ){
+				pool--
+				bar_array[i].attr("title",pool)
+				if (bar_array[i].attr("title") < 1){
+					bar_array[i].animate({
+						height:"2px"
+					}, 50,'linear');
+				}else{
+					bar_array[i].css({
+						height: pool*10+"px"
+					});
+				}
+			}else{
+				bar_array[i].animate({
+					height:"2px"
+				}, 50,'linear');
+			}
+		}
+	}
+}
+
+
+function play(){
+	var time_var = setInterval("timer()", 100);
+	var chart_reduce = setInterval("chartReduce()", 100);
+}
+
+function animateChart(){
+	
+	if ($(this_bar).attr("title")){
+		var pool = $(this_bar).attr("title");
+		$(this_bar).css({
+			"height": pool*10+"px"
+		});
+		
+	}		
+}
+
+
+function doThis(){
+	
+	// for (var n = 0; n < ExplodeFeatures.length;n++){
+	// 	var thisarray = ExplodeFeatures[n].properties;
+	// 	//console.log(thisarray)
+	// 	var itemm = findWithAttr("thisarray", "unix_time", "1293858420");
+	// 	//console.log(itemm)
+	// }
+	
+	
+	realTime = new Date(unix_timeStamp*1000)
+	var realTimeString = String(realTime)
+	$("#timer").html(realTimeString)
+	
+	for (var i = 0; i < 1000; i++){
+		if (ExplodeFeatures[i].properties.unix_time == unix_timeStamp){
+			var latlng_pop = ExplodeFeatures[i].geometry.coordinates;
+			var explode_center = new L.LatLng(latlng_pop[1],latlng_pop[0]);
+			var marker = new L.CustomMarker(explode_center);
+			map.addLayer(marker);
+			
+			var expand_width = 42;
+			animate_height = 10;
+			
+			var custom_div = "#marker_" + q;
+			
+			var circle_color = ExplodeFeatures[i].properties.race;
+			
+			if (circle_color == "B"){
+				var color_hex = "#E75a17";
+				thisSound = firstSound;
+				this_bar = bar_array[0]
+				var B_pool = $(this_bar).attr("title");
+				B_pool++;
+				$(this_bar).attr("title",B_pool)
+			}else if (circle_color == "A"){
+				var color_hex = "#C72085";
+				thisSound = firstSound;
+				this_bar = bar_array[1]
+				var A_pool = $(this_bar).attr("title");
+				A_pool++;
+				$(this_bar).attr("title",A_pool)
+			}else if (circle_color == "P"){
+				var color_hex = "#B52c38";
+				thisSound = firstSound;
+				this_bar = bar_array[2]
+				var P_pool = $(this_bar).attr("title");
+				P_pool++
+				$(this_bar).attr("title",P_pool)
+			}else if (circle_color == "Q"){
+				var color_hex = "#666869";
+				thisSound = secondSound;
+				this_bar = bar_array[3]
+				var X_pool = $(this_bar).attr("title");
+				X_pool++
+				$(this_bar).attr("title",X_pool)
+			}else if (circle_color == "W"){
+				var color_hex = "#3485be";
+				thisSound = secondSound;
+				this_bar = bar_array[4]
+				var W_pool = $(this_bar).attr("title");
+				W_pool++
+				$(this_bar).attr("title",W_pool)
+			}else{
+				var color_hex = "#666869";
+				thisSound = secondSound;
+				//this_bar = $('#X_arst');
+			}
+			
+			
+		//playSound();
+		animateChart();
+			$(custom_div).css("background-color",color_hex).animate({
+					height: expand_width + "px",
+					width: expand_width + "px",
+					"margin-left":"-=" + expand_width/2 +"px",
+					"margin-top":"-=" + expand_width/2 +"px",
+					opacity: 0	
+				}, 1000, function(){
+					$(this).remove();
+					//$(this).css({"width":"3px", "height":"3px", "margin-top":"0", "margin-left":"0","opacity":"1"}).animate({
+					//	opacity: .7
+					//	}, 100); 
+			});
+		}
+	}
+
+}
+  </script>
+
+  </head>
+
+<body>
+  	<div id="chart_canvas">
+		<div id="x_axis"></div>
+		
+		<div class="bar_group first_line">
+			<div id="B_arst" class="arst_bar bar" title="0"></div>
+			<div id="B_stop" class="stop_bar bar" title="0"></div>
+		</div>
+		
+		<div class="bar_group">
+			<div id="H_arst" class="arst_bar bar" title="0"></div>
+			<div id="H_stop" class="stop_bar bar" title="0"></div>
+		</div>
+		
+		<div class="bar_group">
+			<div id="W_arst" class="arst_bar bar" title="0"></div>
+			<div id="W_stop" class="stop_bar bar" title="0"></div>
+		</div>
+		
+		<div class="bar_group">
+			<div id="A_arst" class="arst_bar bar" title="0"></div>
+			<div id="A_stop" class="stop_bar bar" title="0"></div>
+		</div>
+		
+		<div class="bar_group">
+			<div id="X_arst" class="arst_bar bar" title="0"></div>
+			<div id="X_stop" class="stop_bar bar" title="0"></div>
+		</div>
+		
+	</div>
+	
+    <div id="map_canvas"></div>
+
+
+  <div id="legend">
+      <h2 id="datestop">Date</h2>
+      <h3 id="race"></h3><br/>
+	  <span id="arstmade"></span>
+	
+      
+ </div>
+  
+  <a class="cartodb_logo" href="http://www.cartodb.com" target="_blank">CartoDB</a>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="">Test Map</a>
+		  <input type="submit" value="Test This" onclick="play()"/>
+			<div id="slider"></div>
+			<div id="timer" style="color:white;float:right;">Current Time</div>
+          <div class="nav-collapse">
+            
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+<div id="myModal" class="modal hide fade">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Acerca de este mapa...</h3>
+  </div>
+  <div class="modal-body">
+<p>Los datos de este mapa han sido sacados de <a href="http://resultados-elecciones.rtve.es/andalucia/municipios">rtve.es</a>, ya que ha sido imposible encontrar una fuente donde descargar los datos la noche electoral.<br><br>
+    Puedes descargar todos los datos en un <a href="http://vizzuality.s3.amazonaws.com/andalucia_map/andalucia_shp.zip">shapefile</a>,<a href="http://vizzuality.s3.amazonaws.com/andalucia_map/andalucia.kmz">KML</a>, <a href="http://vizzuality.s3.amazonaws.com/andalucia_map/andalucia.csv.zip">CSV</a>, o bien utilizar la <a href="http://viz2.cartodb.com/api/v1/sql?q=SELECT%20*%20from%20andalucia" target="_blank">API de CartoDB</a>.<br><br>
+    Si quieres, tambien puedes embedder este mapa en tu página web usando el siguiente código:<br><br>
+    <code>
+        &lt;iframe width=&quot;950&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&#39;http://vizzuality.s3.amazonaws.com/andalucia_map/embed.html&#39; /&gt;
+        </code>
+    
+    <br><br>
+    Este mapa utiliza <a href="http://www.cartodb.com">CartoDB</a> para crear los mapas, y <a href="http://leaflet.cloudmade.com/">Leaflet</a> para visualizarlos. Ha sido realizado por <a href="https://twitter.com/#!/jatorre/">@jatorre</a>, si tienes alguna duda contactame via Twitter.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal" >Close</a>
+  </div>
+</div>
+
+
+    <div class="container">
+    </div> <!-- /container -->
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+ 
+</body>
+</html>
+

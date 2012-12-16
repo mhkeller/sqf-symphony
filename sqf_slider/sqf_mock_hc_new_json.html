@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SQF Symphony — </title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+	<!-- Le fonts -->
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    
+	<!-- Le styles -->
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" title="no title" charset="utf-8">
+    <link href="css/leaflet.css" rel="stylesheet" type="text/css" />
+	<link href="css/leaflet.ie.css" rel="stylesheet" type="text/css" />
+	<link href="css/cartodb.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8">
+	<link type="text/css" href="css/smoothness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+
+  <script type="text/javascript" src="js/leaflet_chester.js"></script>
+  <script type="text/javascript" src="js/wax.leaflet.min.js"></script>
+  <script type="text/javascript" src="js/cartodb-leaflet.js"></script>
+  <script type="text/javascript" src="js/fullSymphony.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+  <script type="text/javascript" src="js/highcharts.js"></script>
+
+
+
+<script type="text/javascript">
+    var cartodb_leaflet1,
+        cartodb_leaflet2,
+        cartodb_leaflet3;
+    var map 
+	var mX;
+	var mY;
+	var pT;
+	var sign = "<";
+	var q = 0;
+	var i = 0;
+	var len = 10;
+	var ExplodeFeatures
+	var ExplodeFeaturesProp;
+	var ExplodeFeaturesGeom;
+	var realTime;
+	var unix_timeStamp;
+	var interval;
+	var thisSound;
+	var animate_height;
+	var counter = 0 ;
+	var this_bar;
+	var bar_1;
+    var bar_2;
+	var bar_3;
+	var bar_4;
+	var bar_5;
+	var bar_array;
+	var chart;
+	var fromThisPosition = 0;
+	var p;
+	var startingTime = 0;
+	var preventDefault = false;
+	var time_var;
+	var muteSound = false;
+	var animSpeed = 50;
+
+	$(document).ready(function() {
+		
+		function preload(arrayOfImages) {
+		    $(arrayOfImages).each(function(){
+		        $('<img/>')[0].src = this;
+		        // Alternatively you could use:
+		        // (new Image()).src = this;
+		    });
+		}
+
+		// Usage:
+
+		preload([
+			'img/play.png',
+		    'img/pause.png',
+			'img/mute.png',
+			'img/refresh.png'
+		]);
+		
+		bar_1a = $('#b-holder-stop');
+		bar_1b = $('#b-holder-arst');
+
+		bar_2a = $('#h-holder-stop');
+		bar_2b = $('#h-holder-arst');
+
+		bar_3a = $('#w-holder-stop');
+		bar_3b = $('#w-holder-arst');
+
+		bar_4a = $('#a-holder-stop');
+	    bar_4b = $('#a-holder-arst');
+
+		bar_5a = $('#x-holder-stop');
+		bar_5b = $('#x-holder-arst');
+		bar_array = [bar_1a,bar_1b,bar_2a,bar_2b,bar_3a,bar_3b,bar_4a,bar_4b,bar_5a,bar_5b]
+		
+		chart = new Highcharts.Chart({
+		        chart: {
+		            renderTo: 'highchart_canvas',
+		            type: 'column',
+					spacingLeft:0,
+					marginLeft: 15,
+					marginTop:45
+		        },
+				title:{
+					text:'Stops vs arrests by race',
+				},
+		        xAxis: {
+		            categories: ['Black', 'Hisp.', 'Asian', 'White', 'Oth.'],
+					labels:{
+						rotation:0
+					},
+					style:{
+						"fontSize":"2px"
+					}
+		        },
+				yAxis:{
+					title: "",
+					labels:{
+						step:2
+						},
+					allowDecimals:false
+				},
+		        plotOptions: {
+		                column: {
+		                    pointPadding: 0,
+		                    borderWidth: 0,
+		                    shadow: false,
+		                    groupPadding: 0.1,
+
+		            },series: {
+		                    animation: false
+		                }
+		            },
+		                series: [{
+		                name: 'Stopped',
+		                data: [.5, .5, .5, .5, .5]
+		            }, {
+		                name: 'Arrested',
+		                data: [.5, .5, .5, .5, .5]
+		            }]
+		});//end highchart
+
+	    //Highcharts example
+	    $('#button').click(function() {
+	    	chart.series[0].data[0].update(150); 
+	    });
+	
+		$('.play-pause-reset').click(function(){
+			if ($(this).hasClass('btn_triangle')){
+				$(this).removeClass('btn_triangle').addClass('btn_bars')
+				$('#play-img').html('<img src="img/pause.png"/>');
+				$('#play-text').css({"margin-left":"9px","margin-right":"14px"}).html('pause');
+				play();
+			}else{
+				$(this).removeClass('btn_bars').addClass('btn_triangle');
+				$('#play-img').html('<img src="img/play.png"/>');
+				$('#play-text').css({"margin-left":"16px","margin-right":"18px"}).html('play');
+				stopPlaying();
+			}
+		});
+		
+		$('#sound-box').click (function (){
+			var thisCheck = $(this);
+			if (thisCheck.is (':checked')){
+				$('#sound-img').html('<img src="img/sound.png"/></span>');
+				muteSound = false;
+			}else{
+				$('#sound-img').html('<img src="img/mute.png"/></span>');
+				muteSound = true;
+			}
+		});
+		
+		$('#timeline-select').change(function(){
+			if ($(this).attr("checked")){
+				$('#timeline-leftBar').show();
+			}
+		});
+		
+		$('#date-select').change(function(){
+			if ($(this).attr("checked")){
+				$('#timeline-leftBar').hide();
+			}
+			
+		});
+		
+		function createJSONLists(){
+			var polygons_url = "https://thenewyorkworld.cartodb.com/api/v2/sql?q=select race,unix_time,arstmade,the_geom as the_geom from sqf_douglas_symphony where unix_time >= " + String(startingTime) + " limit 10000&format=geojson";
+
+			$.getJSON(polygons_url, function(data) {
+		    	ExplodeFeatures = data.features;
+				console.log(ExplodeFeatures)
+				if (startingTime !=0){
+					loopFeatures();
+				}
+
+			});
+		}
+
+		$( "#slider" ).slider({
+			value:1293861600,
+			min: 1293861600,
+			max: 1325397599,
+			step: 60,
+			stop: function(event,ui){
+				preventDefault = true;
+			
+			},
+			change: function(event,ui){
+				//Programatically
+				
+				//clear all markers
+			
+				if (preventDefault == false){
+					loopFeatures();
+				}else{
+					preventDefault = false;
+				}
+			},
+			slide: function( event, ui ) {
+				//manually
+				startingTime = ui.value;
+				realTime = new Date((ui.value)*1000)
+				var realTimeString = String(realTime)
+				$( "#time_display" ).html(realTimeString);
+			
+				//loopFeatures();
+				//createJSONLists();
+			}
+		 });
+		
+		init_map();
+		createJSONLists();
+});//end document ready
+
+
+//creates and simplifies the geometry of mouseover polygons
+function create_polygons(ready) {
+    var polygons =  {};
+	var polygons_url = 'https://thenyworld.cartodb.com/api/v2/sql?q=select mj_stops,ST_Transform(ST_Buffer(the_geom,0.001),3857) as the_geom_webmercator from sqf_dan_total&format=geojson';
+
+    $.getJSON(polygons_url, function(data) {
+        var geojson = new L.GeoJSON();
+        var features = data.features;
+        for (var i = 0, len = features.length; i < len; ++i) {
+          var pol = new Object();
+          var geo = L.GeoJSON.geometryToLayer(features[i].geometry);
+
+          geo.setStyle({
+            weight: 4,
+            color: 'orange',
+            opacity: 1,
+            fillColor: 'orange',
+            fillOpacity: .75
+
+          });
+
+          pol.geo = geo;
+          pol.prop = features[i].properties;
+
+          var key = features[i].properties.uid;
+
+          if(polygons[key]) {
+            polygons[key].push(pol);
+          } else {
+            polygons[key] = [pol];
+          }
+
+        }
+        ready(polygons);
+    });
+
+}
+
+	   
+function init_map(polygons) {
+       var current_polygon = null; 
+
+	map = new L.Map('map_canvas').setView(new L.LatLng(40.81069108268215, -73.94622802734375), 10);
+	//var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-streets/{z}/{x}/{y}.png',
+	var mapboxUrl = 'http://{s}.tiles.mapbox.com/v3/cartodb.map-1nh578vv/{z}/{x}/{y}.png',
+       	mapbox = new L.TileLayer(mapboxUrl, {maxZoom: 16,attribution:"CartoDB and Mapbox"});
+       map.addLayer(mapbox,true);
+
+
+	var lW = $('#legend').width();
+	var lH = $('#legend').height();
+	$("#map_canvas").mousemove(function(e){
+		mX = e.pageX + lW/2 - 15;
+		mY = e.pageY - lH/2;
+		pT++;
+	});
+
+	$("#legend").hover(function(){
+		$(this).hide();
+	});
+
+       var legend = {
+	          out: function() {
+	              $('div.over').hide();
+					if (pT > 3){
+	              		$("#legend").hide();
+					}
+	          },
+
+	          over: function(feature, div, opt3, evt){
+				pT = 0;
+	            $('div.over').text(feature).show();
+	            $('div.over').tooltip('show')
+	            featureAttributes = feature
+				//console.log(featureAttributes)
+
+	            //["uid", "arstmade", "daystop", "monthstop", "race"]
+	            $("#datestop").text(featureAttributes);
+	            //$("#race").text(featureAttributes[0]);
+	            //$("#arstmade").text(featureAttributes[1]);
+
+	            $("#legend").css({"top": mY + "px",'left': mX + "px"}).show();
+
+
+	        }
+	      }
+
+	      // options to control events on geometries
+	      var waxOptions = {
+	          callbacks: {
+	            out: function(){
+	                if(current_polygon) {
+	                  for(var i=0; i < current_polygon.length; ++i) {
+	                    map.removeLayer(current_polygon[i].geo);
+	                  }
+	                  current_polygon = null;
+	                }
+	                legend.out();
+	            },
+	            over: function(feature, div, opt3, evt){
+					//console.log(feature)
+	                legend.over(feature, div, opt3, evt);
+
+	                var key = feature
+	                //current_polygon = polygons[key];
+
+	                // for(var i=0; i < current_polygon.length; ++i) {
+	                //                    map.addLayer(current_polygon[i].geo);
+	                // 
+	                //                }
+	            },
+	            click: function(feature, div, op3, evt) {
+	            }
+	          },
+	      };
+	
+		function createCartoLayer(){
+	        cartodb_leaflet2 = new L.CartoDBLayer({
+	          map_canvas: 'map_canvas',
+	          map: map,
+	          user_name:"thenyworld",
+	          table_name: 'sqf_dan_total',
+	          infowindow: false,
+	          query: "SELECT * FROM {{table_name}}",
+		  	  //tile_style: "#{{table_name}};marker-opacity:0;",
+	          interactivity: ["mj_stops"],
+	          auto_bound: false,
+	          debug: false,
+	          waxOptions: waxOptions
+	    });
+	}
+  	} //end initpolygons
+
+
+
+//##############################
+//#Animate Chart
+//##############################
+
+
+
+function timer(){
+
+	//grab the current tiem from the slider
+	interval = $("#slider").slider("value");
+	//add a minute to it in unix time
+	
+	if (animSpeed == 60000){
+		interval = interval + 1;
+	}else{
+		interval = interval + 60;
+	}
+
+	//make this variable for some reason
+	unix_timeStamp = interval;
+
+	//generate a pretty time for the time box
+	realTime = new Date(unix_timeStamp*1000)
+	var realTimeString = String(realTime)
+	$("#time_display").html(realTimeString)
+	
+	//set the slider value
+	//the slider's events handle the rest
+	$("#slider").slider("value",interval)
+}
+
+function play(){
+	if (animSpeed == 60000){
+		timer();
+	}
+	time_var = setInterval("timer()", animSpeed);
+}
+
+function stopPlaying(){
+	var end_int = clearInterval(time_var);
+}
+
+function loopFeatures(){
+
+	for (p = fromThisPosition; p < (fromThisPosition + 100); p++){
+		if (ExplodeFeatures[p].properties.unix_time == unix_timeStamp){
+			fromThisPosition++
+
+			var latlng_pop = ExplodeFeatures[p].geometry.coordinates;
+			var explode_center = new L.LatLng(latlng_pop[1],latlng_pop[0]);
+			var marker = new L.CustomMarker(explode_center);
+			map.addLayer(marker);
+			
+			var expand_width = 42;
+			animate_height = 10;
+
+			var custom_div = "#marker_" + q;
+
+			var circle_color = ExplodeFeatures[p].properties.race;
+			var arstmade = ExplodeFeatures[p].properties.arstmade;
+			
+			var this_class;
+			
+			var new_barID = "#newBar_" + q; 
+
+
+			if (circle_color == "B" && arstmade == "N"){ //black stop
+				var color_hex = "#CC4C02";
+				thisSound = SOUND_1b;
+				this_bar = bar_array[0];
+				var this_class = "B_stop";
+				var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "B" && arstmade == "Y"){ //black arst
+				var color_hex = "#FE9929";
+				thisSound = SOUND_1a;
+				this_bar = bar_array[1]
+				var this_class = "B_arst";
+				var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "P" && arstmade == "N"){ // b hispanic stop
+				var color_hex = "#238443";
+				thisSound = SOUND_2b;
+				this_bar = bar_array[2]
+				var this_class = "H_stop";
+				var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "P" && arstmade == "Y"){ // b hispanic arst
+				var color_hex = "#78C679";
+				thisSound = SOUND_2a;
+				this_bar = bar_array[3];
+				var this_class = "H_arst";
+				var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)		
+			}else if (circle_color == "Q" && arstmade == "N"){ // w hispanic stop
+				var color_hex = "#238443";
+				thisSound = SOUND_2b;
+				this_bar = bar_array[2];
+				var this_class = "H_stop";
+				var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "Q" && arstmade == "Y"){ // w hispanic stop
+				var color_hex = "#78C679";
+				thisSound = SOUND_2a;
+				this_bar = bar_array[3];
+				var this_class = "H_arst";
+				var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "W" && arstmade == "N"){ // w  stop
+				var color_hex = "#225EA8";
+				thisSound = SOUND_3b;
+				this_bar = bar_array[4];
+				var this_class = "W_stop";
+				var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)			
+			}else if (circle_color == "W" && arstmade == "Y"){ // w arst
+				var color_hex = "#41B6C4";
+				thisSound = SOUND_3a;
+				this_bar = bar_array[5];
+				var this_class = "W_arst";
+				var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "A" && arstmade == "N"){ // asian stop
+				var color_hex = "#AE017E";
+				thisSound = SOUND_4b;
+				this_bar = bar_array[6];
+				var this_class = "A_stop";
+				var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else if (circle_color == "A" && arstmade == "Y"){ // asian arrest
+				var color_hex = "#F768A1";
+				thisSound = SOUND_4a;
+				this_bar = bar_array[7];
+				var this_class = "A_arst";
+				var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+				$(this_bar).append(new_bar)
+			}else {
+				if (arstmade == "N") {						//other stop
+					var color_hex = "#525252";
+					thisSound = SOUND_5b;
+					this_bar = bar_array[8];
+					var this_class = "X_stop";
+					var new_bar = "<div id='newBar_" + q + "' class='stop_bar " + this_class + " initial_bar'></div>"
+					$(this_bar).append(new_bar)
+				}else{										//other arrest
+					var color_hex = "#969696";
+					thisSound = SOUND_5a;
+					this_bar = bar_array[9];
+					var this_class = "X_arst";
+					var new_bar = "<div id='newBar_" + q + "' class='arst_bar " + this_class + " initial_bar'></div>"
+					$(this_bar).append(new_bar)
+				}			
+			}
+
+			if (muteSound == false){
+				playSound();
+			}
+		
+			//animate chart
+			if ($(new_barID).hasClass('stop_bar')){
+				$(new_barID).animate({
+					height: "20px"
+				},20, function(){
+					$(this).fadeOut(function(){
+						$(this).remove();
+					});
+				});
+			}else{
+				$(new_barID).animate({
+					height: "20px"
+				},500, function(){
+					$(this).delay(600).fadeOut(800,function(){
+						$(this).remove();
+					});
+				});
+			}
+		
+			//animate dot
+			$(custom_div).css("background-color",color_hex).animate({
+					height: expand_width + "px",
+					width: expand_width + "px",
+					"margin-left":"-=" + expand_width/2 +"px",
+					"margin-top":"-=" + expand_width/2 +"px",
+					opacity: 0	
+				}, 1000, function(){
+					$(this).remove();
+					//$(this).css({"width":"3px", "height":"3px", "margin-top":"0", "margin-left":"0","opacity":"1"}).animate({
+					//	opacity: .7
+					//	}, 100); 
+			});
+		
+	    }//close if
+    }//close for
+
+}//close loop features
+</script>
+	
+
+
+  </head>
+
+<body>
+	
+    <div class="container">
+	<div class="row">
+		<div class="span12">
+			<h1 class="inline">SQF Symphony</h1>
+			<h3 class="inline bump-left">a visual and aural tour through a year's worth of stop and frisks</h3>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="span12 tag-text">
+			SELECT VIEW
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="span3">
+			<form action="">
+				<input id="timeline-select" class="chart-selector" type="radio" name="vis-type" value="timeline" checked /> <span class="sqf_view sqf_view_selected">SQF Timeline</span>
+				<input id="date-select" class="chart-selector second-selector" type="radio" name="vis-type" value="date" /> <span class="sqf_view">Date range</span><br/>
+				<div class="clear-both"></div>
+				<span id="play-img" class="play-pause-reset btn_triangle"><img src="img/play.png"/></span>
+				<input id="sound-box" style="margin-left:22px" type="checkbox" name="speed" value="4" checked/> <span id="sound-img"><img src="img/sound.png"/></span><br/>
+				<span id="play-text" class="play-pause-reset btn_triangle">play</span>
+				<input type="checkbox" name="speed" value="3600" /> 1x
+			</form>
+		</div>
+		<div class="span9">
+			<div id="slider"></div>
+		</div>
+	</div>
+
+	
+	<div class="row">
+		<div class="span3" id="leftBar">
+			<div id="timeline-leftBar">
+				<div id="sqf_about">
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sroident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</div>
+			
+				<div id="highchart_canvas" style="height: 400px;width:220px;"></div>
+				 <div id="static_canvas">
+					<div class="h_lineBG">
+						<div class='divider_line_h d_line first_line_h'>30</div><div class='divider_line_h d_line '>24</div><div class='divider_line_h d_line'>18</div><div class='divider_line_h d_line'></span>12</div><div class='divider_line_h d_line'><span style='visibility:hidden;'>0</span>6</div><div class='divider_line_h d_line'><span style='visibility:hidden;'>0</span>0</div>
+					</div>
+				
+					<div id="bar_layer">
+					
+						<div class="bar_group first_bar_group">
+							<div id="b-holder-stop" class="bar-holder">
+								<div class="stop_bar initial_bar B_stop"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group">
+							<div id="b-holder-arst" class="bar-holder">
+								<div class="arst_bar initial_bar B_arst"></div>
+							</div>
+						</div>
+
+						<div class="bar_group new_group">
+							<div id="h-holder-stop" class="bar-holder">
+								<div class="stop_bar initial_bar H_stop"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group">
+							<div id="h-holder-arst" class="bar-holder">
+								<div class="arst_bar initial_bar H_arst"></div>
+							</div>
+						</div>
+
+						<div class="bar_group new_group">
+							<div id="w-holder-stop" class="bar-holder">
+								<div class="stop_bar initial_bar W_stop"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group">
+							<div id="w-holder-arst" class="bar-holder">
+								<div class="arst_bar initial_bar W_arst"></div>
+							</div>
+						</div>
+					
+					
+						<div class="bar_group new_group">
+							<div id="a-holder-stop" class="bar-holder">
+								<div class="stop_bar bar A_stop"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group">
+							<div id="a-holder-arst" class="bar-holder">
+								<div class="arst_bar bar A_arst"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group new_group">
+							<div id="x-holder-stop" class="bar-holder">
+								<div class="stop_bar bar X_stop"></div>
+							</div>
+						</div>
+					
+						<div class="bar_group">
+							<div id="x-holder-arst" class="bar-holder">
+								<div class="arst_bar bar X_arst"></div>
+							</div>
+						</div>
+										
+					</div>
+
+				</div> 
+			</div>
+		</div>
+		
+		<div class="span6" style="position:relative" >
+			<div id="time_display"></div>
+			<div id="map_canvas"></div>
+			<a class="cartodb_logo" href="http://www.cartodb.com" target="_blank">CartoDB</a>
+			
+		</div>
+		
+		<div class="span3" id="rightBar">
+
+		</div>
+	</div>
+	
+	
+
+	
+    
+
+  <div id="legend">
+      <h2 id="datestop">Date</h2>
+      <h3 id="race"></h3><br/>
+	  <span id="arstmade"></span>
+	
+      
+ </div>
+
+		<!--
+  
+	
+	<div id="timer" style="color:white;float:right;">Current Time</div>
+	<input type="submit" value="Test This" onclick="play()"/>
+-->
+
+
+
+
+
+    </div> <!-- /container -->
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+
+
+ 
+</body>
+</html>
+

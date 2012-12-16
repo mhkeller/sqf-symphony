@@ -1,0 +1,56 @@
+#canvas {
+  margin-top: 20px;
+  width: 550px;
+  height: 350px;
+  background: #eee;
+  position: relative;
+  border-right: 60px solid #EEE;;
+}
+
+.bar {
+  -moz-transition-duration: 0.8s;
+  -webkit-transition-duration: 0.8s;
+  transition-duration: 0.8s;
+  position: absolute;
+  bottom: 0px;
+  background: steelblue;
+  opacity: 0.7;
+}
+
+.bar:hover { opacity: 1.0; }
+
+.bar .label {
+  text-transform: uppercase;
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.bar .value {
+  font-weight: bold;
+  text-transform: uppercase;
+  position: absolute;
+  top: -25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+#de{
+	left: 90px !important;
+}
+
+#uk{
+	left: 190px !important;
+}
+
+#gr{
+	left: 290px !important;
+}
+
+#caa{
+	left: 390px !important;
+}
+

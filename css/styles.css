@@ -1,0 +1,76 @@
+html, body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+.clearfix{
+	clear:both;
+}
+/* Override Styles */
+.leaflet-top .leaflet-control{
+	margin-top:2px;
+}
+/* End Override Styles */
+#map-canvas{
+	width:100%;
+	height:100%;
+}
+.leaflet-marker-custom{
+	position:absolute;
+	width:10px;
+	height:10px;
+	background-color:red;
+	border-radius:50%;
+	transition: all .4s;
+	-moz-transition: all .4s; /* Firefox 4 */
+	-webkit-transition: all .4s; /* Safari and Chrome */
+	-o-transition: all .4s; /* Opera */
+}
+.expand-marker{
+	height:80px;
+	width:80px;
+	opacity:0;
+}
+.overlay-box{
+	position:absolute;
+	box-shadow: 0 0 5px #ccc;
+	background-color:rgba(255,255,255,.9);
+	font-family: 'Droid Sans', sans-serif;
+	z-index:9999;
+	font-size:12px;
+	line-height:18px;
+}
+#month-select{
+	top:0;
+	right:0;
+	width:300px;
+}
+.overlay-select:hover{
+	text-decoration:underline;
+	color:#31D6EC;
+	cursor:pointer;
+	cursor:hand;
+}
+.overlay-select.selected{
+	font-weight:bold;
+	background-color:#31D6EC;
+	color:white;
+}
+.overlay-select.selected:hover{
+	cursor:default;
+	text-decoration: none;
+}
+#viz-select{
+	top:0;
+	left:50px;
+	text-align:center;
+}
+.viz-option{
+	padding:5px;
+}
+#animation-drawer{
+	top:0;
+	left:175px;
+	height:56px;
+	width:795px;
+}
