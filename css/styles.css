@@ -17,14 +17,15 @@ html, body {
 }
 .leaflet-marker-custom{
 	position:absolute;
-	width:10px;
-	height:10px;
+	width:0px;
+	height:0px;
 	background-color:red;
 	border-radius:50%;
-	transition: all .4s;
-	-moz-transition: all .4s; /* Firefox 4 */
-	-webkit-transition: all .4s; /* Safari and Chrome */
-	-o-transition: all .4s; /* Opera */
+	-webkit-transition: all .8s;
+/*	transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
+	-moz-transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
+	-webkit-transition: height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
+	-o-transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;*/
 }
 .expand-marker{
 	height:80px;
@@ -36,7 +37,7 @@ html, body {
 	box-shadow: 0 0 5px #ccc;
 	background-color:rgba(255,255,255,.9);
 	font-family: 'Droid Sans', sans-serif;
-	z-index:9999;
+	z-index:99;
 	font-size:12px;
 	line-height:18px;
 }
@@ -44,6 +45,15 @@ html, body {
 	top:0;
 	right:0;
 	width:300px;
+}
+.overlay-select{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
 }
 .overlay-select:hover{
 	text-decoration:underline;
@@ -66,11 +76,118 @@ html, body {
 	text-align:center;
 }
 .viz-option{
-	padding:5px;
+	padding:10px 5px;
 }
 #animation-drawer{
 	top:0;
 	left:175px;
-	height:56px;
+	height:	76px;
 	width:795px;
+	z-index:9;
 }
+#area-chart-canvas{
+	width:100%;
+	height:100%;
+}
+#animation-scrubber{
+	position:absolute;
+	top:0;
+	bottom:0;
+	width:1px;
+	background-color:#303030;
+	opacity: .4;
+	-webkit-opacity: 0.4;
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	z-index:99;
+	display:none;
+}
+#slider-container{
+	float:left;
+	width:500px;
+	padding:10px;
+}
+/* EQUALIZER */
+#equalizer{
+	width: 205px;
+	height: 240px;
+	top: 76px;
+	left: 50px;
+	z-index: 8;
+}
+#equalizer-container{
+	height:92%;
+	float:left;
+}
+.col-wrapper{
+    height:100%;
+    width:15px;
+    position:relative;
+    float:left;
+}
+.bar-container{
+    position:absolute;
+    bottom:0;
+    width:100%;
+}
+.bar{
+    width:100%;
+    height:2px;
+}
+.col-wrapper.first-col{
+	margin-left:0px!important;
+}
+.col-wrapper.left-col{
+	margin-left:5px;
+}
+/* Black */
+#col-narst-black .bar, .leaflet-marker-custom.bN{
+	background-color:#FE9929;
+}
+#col-arst-black .bar, .leaflet-marker-custom.bY{
+	background-color:#CC4C02;
+}
+/* Hispanic */
+#col-narst-hisp .bar, .leaflet-marker-custom.hN{
+	background-color:#78C679;
+}
+#col-arst-hisp .bar, .leaflet-marker-custom.hY{
+	background-color:#238443;
+}
+/* White */
+#col-narst-white .bar, .leaflet-marker-custom.wN{
+	background-color:#41B6C4;
+}
+#col-arst-white .bar, .leaflet-marker-custom.wY{
+	background-color:#225EA8;
+}
+/* Asian */
+#col-narst-asian .bar, .leaflet-marker-custom.aN{
+	background-color:#F768A1;
+}
+#col-arst-asian .bar, .leaflet-marker-custom.aY{
+	background-color:#AE017E;
+}
+/* Other */
+#col-narst-other .bar, .leaflet-marker-custom.oN{
+	background-color:#969696;
+}
+#col-arst-other .bar, .leaflet-marker-custom.oY{
+	background-color:#525252;
+}
+#equalizer-x-axis-container{
+	float:left;
+}
+.x-axis-label{
+	margin-right: 5px;
+	float: left;
+	width: 30px;
+	text-align: center;
+}
+#equalizer-y-axis-container{
+	float:left;
+	height:100%;
+	width:25px;
+	background-color:#c0ffee;
+}
+​

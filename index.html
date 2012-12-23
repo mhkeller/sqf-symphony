@@ -8,10 +8,15 @@
 	<![endif]-->
 	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.9.2.custom.min.css">
+
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="libs/leaflet_chester.js"></script>
 	<!--<script src="dist/leaflet.min.js"></script>-->
-	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
+	<!--<script src="libs/miso.ds.deps.ie.0.4.1.js"></script>-->
+	<!--<script src="libs/highcharts.js"></script>-->
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="libs/jquery-ui-1.9.2.custom.min.js"></script>
 </head>
 <body>
 	<div id="viz-select" class="overlay-box">
@@ -19,12 +24,84 @@
 		<div class="viz-option overlay-select" data-viz-select="cumulative">--Cumulative counts--</div>
 	</div>
 	<div id="animation-drawer" class="overlay-box">
+		<div id="play-btn" class="overlay-select" style="padding:10px;float:left;">play</div>
+		<div class="month-select overlay-select" style="float:left;padding:10px;" data-month-select="january">January</div>
+		<!-- <div id="animation-scrubber"></div> -->
+		<div id="slider-container">
+			<div id="slider"></div>
+		</div>
+		<div id="time-display" style="padding-left:5px;float:left;"></div>
+		<!-- <div id="area-chart-canvas"></div> -->
+	</div>
+	<div id="equalizer" class="overlay-box">
+		<div id="equalizer-y-axis-container">
+
+		</div>
+		<div id="equalizer-container">
+			<div id="col-narst-black" class="col-wrapper first-col left-col">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-arst-black" class="col-wrapper">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-narst-hisp" class="col-wrapper left-col">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-arst-hisp" class="col-wrapper">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-narst-white" class="col-wrapper left-col">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-arst-white" class="col-wrapper">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-narst-asian" class="col-wrapper left-col">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-arst-asian" class="col-wrapper">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-narst-other" class="col-wrapper left-col">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+			<div id="col-arst-other" class="col-wrapper">
+			    <div class="bar-container">
+			        <div class="bar"></div>
+			    </div>
+			</div>
+		</div>
+		<div id="equalizer-x-axis-container">
+			<div class="x-axis-label">Black</div>
+			<div class="x-axis-label">Hisp.</div>
+			<div class="x-axis-label">White</div>
+			<div class="x-axis-label">Asian</div>
+			<div class="x-axis-label">Oth.</div>
+		</div>
 	</div>
 <!-- 	<div id="month-select" class="overlay-box">
 		<span>Select a month:</span>
 		<span class="month-select overlay-select" data-month-select="january">January</span>
-	</div>
- -->	<div id="map-canvas"></div>
+	</div> -->
+ 	<div id="map-canvas"></div>
 	<script src="js/app.js"></script>
 </body>
 </html>
