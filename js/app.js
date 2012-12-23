@@ -20,7 +20,6 @@
 		sound_oN: null,
 		sound_oY: null
 	}
-	var thisSound;
 
 	var mergeRaces = function(race){
 		if (race == 'B'){
@@ -53,9 +52,8 @@
 		}
 	}
 
-	var popMarker = function(){
-		var mark_number_pop = CONFIG.marker_number;
-		$('#marker_' + mark_number_pop).delay(1)
+	var popMarker = function(mark_number){
+		$('#marker_' + mark_number).delay(1)
                                        .queue(function(n) {
                                           $(this).addClass('expand-marker');
                                        n();
@@ -67,9 +65,45 @@
 		CONFIG.marker_number++;
 	}
 
-	var addMarker = function(sqf_incident){
-		// Getting Data
-		var mark_number_add = CONFIG.marker_number;
+	var playSound = function(race_arstmade){
+		var thisSound = CONFIG['sound_' + race_arstmade];
+		var source = context.createBufferSource(); // creates a sound source
+		source.buffer = thisSound;                 // tell the source which sound to play
+		source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+		source.noteOn(0);                          // play the source now
+	}
+
+	var popBar = function(mark_number){
+		var $bar = $('#bar_' + mark_number)
+		if ($bar.hasClass('N')){
+			$bar.animate({
+				height: "20px"
+			},20, function(){
+				$(this).fadeOut(function(){
+					$(this).remove();
+				});
+			});
+		}else{
+			$bar.animate({
+				height: "20px"
+			},500, function(){
+				$(this).delay(600).fadeOut(800,function(){
+					$(this).remove();
+				});
+			});
+		}
+	}
+
+	var addBar = function(mark_number, race_arstmade){
+		var arstmade = race_arstmade.substring(1,2);
+		var bar_div = '<div id="bar_'+mark_number+'" class="bar '+arstmade+'"></div>'
+		$('#col-'+race_arstmade+' .bar-container').append(bar_div);
+		popBar(mark_number);
+	}
+
+	var configData = function(sqf_incident){
+		var mark_number = CONFIG.marker_number;
+		// If the stop has no lat/lng put it in New Jersey
 		if (sqf_incident.lat != 'NA'){
 			var lat = sqf_incident.lat;
 			var lng = sqf_incident.lng;
@@ -81,18 +115,19 @@
 		var arstmade = sqf_incident.arstmade;
 		var race_arstmade = race + arstmade;
 
-		// Play Sound
-		thisSound = CONFIG['sound_' + race_arstmade];
-		playSound();
+		playSound(race_arstmade);
+		addMarker(mark_number, lat, lng, race_arstmade);
+		addBar(mark_number, race_arstmade);
+	}
 
-		// Adding Marker
+	var addMarker = function(mark_number, lat, lng, race_arstmade){
 		var center = new L.LatLng(lat, lng);
 		var marker = new L.CustomMarker(center);
 		map.addLayer(marker);
-		$('#marker_' + mark_number_add).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
+		$('#marker_' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
 			$(this).remove();
 		}).addClass(race_arstmade);
-		popMarker();
+		popMarker(mark_number);
 	}
 
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
@@ -115,7 +150,7 @@
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
 				$.each(sqf_incident, function(key, value){
-					addMarker(value);
+					configData(value);
 				})
 			}
 
@@ -138,10 +173,11 @@
 		//grab the current tiem from the slider
 		var interval = $("#slider").slider("value");
 
+		var one_minute = 60;
 		//add a minute to it in unix time
-		interval = interval + 60;
+		interval = interval + one_minute;
 
-		//make this variable for some reason
+		//change the name
 		unix_timeStamp = interval;
 
 		//generate a pretty time for the time box
@@ -511,15 +547,5 @@
 	}
 	sound_oY_request.send();
 
-
-	//#################
-	//# Handle Playing
-	//#################
-	function playSound() {
-	  var source = context.createBufferSource(); // creates a sound source
-	  source.buffer = thisSound;                 // tell the source which sound to play
-	  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-	  source.noteOn(0);                          // play the source now
-	}
 
 })();
