@@ -21,11 +21,17 @@ html, body {
 	height:0px;
 	background-color:red;
 	border-radius:50%;
-	-webkit-transition: all .8s;
-/*	transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
-	-moz-transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
-	-webkit-transition: height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;
-	-o-transition:  height .4s, width .4s, margin-top .4s, margin-left .4s, opacity .4s;*/
+	transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
+	-moz-transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
+	-webkit-transition: height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
+	-o-transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
+}
+/* Animate more slowly if arrested */
+.leaflet-marker-custom.bY,.leaflet-marker-custom.hY,.leaflet-marker-custom.wY,.leaflet-marker-custom.aY,.leaflet-marker-custom.oY{
+	transition: height 2s, width 2s, margin-top 2s, margin-left 2s, opacity 2s;
+	-moz-transition: height 2s, width 2s, margin-top 2s, margin-left 2s, opacity 2s;
+	-webkit-transition: height 2s, width 2s, margin-top 2s, margin-left 2s, opacity 2s;
+	-o-transition: height 2s, width 2s, margin-top 2s, margin-left 2s, opacity 2s;
 }
 .expand-marker{
 	height:80px;

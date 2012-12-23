@@ -8,8 +8,19 @@
 		start_lng: -73.94622802734375,
 		na_lat: 40.909361,
 		na_lng: -74.230714,
-		start_zoom: 10
+		start_zoom: 10,
+		sound_bN: null,
+		sound_bY: null,
+		sound_hN: null,
+		sound_hY: null,
+		sound_wN: null,
+		sound_wY: null,
+		sound_aN: null,
+		sound_aY: null,
+		sound_oN: null,
+		sound_oY: null
 	}
+	var thisSound;
 
 	var mergeRaces = function(race){
 		if (race == 'B'){
@@ -20,7 +31,7 @@
 			return 'h';
 		}else if (race == 'Q'){
 			// White Hispanic return hispanic
-			return 'h'
+			return 'h';
 		}else if (race == 'W'){
 			// White return white
 			return race.toLowerCase();
@@ -57,6 +68,7 @@
 	}
 
 	var addMarker = function(sqf_incident){
+		// Getting Data
 		var mark_number_add = CONFIG.marker_number;
 		if (sqf_incident.lat != 'NA'){
 			var lat = sqf_incident.lat;
@@ -69,6 +81,11 @@
 		var arstmade = sqf_incident.arstmade;
 		var race_arstmade = race + arstmade;
 
+		// Play Sound
+		thisSound = CONFIG['sound_' + race_arstmade];
+		playSound();
+
+		// Adding Marker
 		var center = new L.LatLng(lat, lng);
 		var marker = new L.CustomMarker(center);
 		map.addLayer(marker);
@@ -315,5 +332,194 @@
 		});
 	  }
 	});
+
+	// Add Sounds
+	var context = new webkitAudioContext();
+
+	//#################
+	//# First Sound - Black not arrested
+	//#################
+
+	var sound_bN_request = new XMLHttpRequest();
+	sound_bN_request.open('GET', "/sounds/sound_bN.mp3", true);
+	sound_bN_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_bN_request.onload = function() {
+	  context.decodeAudioData(sound_bN_request.response, function(buffer) {
+	    CONFIG.sound_bN = buffer;
+
+	  });
+	}
+	sound_bN_request.send();
+
+	//#################
+	//# Next Sound - Black arrested
+	//#################
+
+	var sound_bY_request = new XMLHttpRequest();
+	sound_bY_request.open('GET', "/sounds/sound_bY.mp3", true);
+	sound_bY_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_bY_request.onload = function() {
+	  context.decodeAudioData(sound_bY_request.response, function(buffer) {
+	    CONFIG.sound_bY = buffer;
+
+	  });
+	}
+	sound_bY_request.send();
+
+
+	//#################
+	//# Next Sound - Hispanic not arrested
+	//#################
+
+	var sound_hN_request = new XMLHttpRequest();
+	sound_hN_request.open('GET', "/sounds/sound_hN.mp3", true);
+	sound_hN_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_hN_request.onload = function() {
+	  context.decodeAudioData(sound_hN_request.response, function(buffer) {
+	    CONFIG.sound_hN = buffer;
+
+	  });
+	}
+	sound_hN_request.send();
+
+	//#################
+	//# Next Sound - Hispanic arrested
+	//#################
+
+	var sound_hY_request = new XMLHttpRequest();
+	sound_hY_request.open('GET', "/sounds/sound_hY.mp3", true);
+	sound_hY_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_hY_request.onload = function() {
+	  context.decodeAudioData(sound_hY_request.response, function(buffer) {
+	    CONFIG.sound_hY = buffer;
+
+	  });
+	}
+	sound_hY_request.send();
+
+
+	//#################
+	//# Next Sound - White not arrested
+	//#################
+
+	var sound_wN_request = new XMLHttpRequest();
+	sound_wN_request.open('GET', "/sounds/sound_wN.mp3", true);
+	sound_wN_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_wN_request.onload = function() {
+	  context.decodeAudioData(sound_wN_request.response, function(buffer) {
+	    CONFIG.sound_wN = buffer;
+
+	  });
+	}
+	sound_wN_request.send();
+
+	//#################
+	//# Next Sound - White arrested
+	//#################
+
+	var sound_wY_request = new XMLHttpRequest();
+	sound_wY_request.open('GET', "/sounds/sound_wY.mp3", true);
+	sound_wY_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_wY_request.onload = function() {
+	  context.decodeAudioData(sound_wY_request.response, function(buffer) {
+	    CONFIG.sound_wY = buffer;
+
+	  });
+	}
+	sound_wY_request.send();
+
+
+
+	//#################
+	//# Next Sound - Asian not arrested
+	//#################
+
+	var sound_aN_request = new XMLHttpRequest();
+	sound_aN_request.open('GET', "/sounds/sound_aN.mp3", true);
+	sound_aN_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_aN_request.onload = function() {
+	  context.decodeAudioData(sound_aN_request.response, function(buffer) {
+	    CONFIG.sound_aN = buffer;
+
+	  });
+	}
+	sound_aN_request.send();
+
+	//#################
+	//# Next Sound - Asian arrested
+	//#################
+
+	var sound_aY_request = new XMLHttpRequest();
+	sound_aY_request.open('GET', "/sounds/sound_aY.mp3", true);
+	sound_aY_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_aY_request.onload = function() {
+	  context.decodeAudioData(sound_aY_request.response, function(buffer) {
+	    CONFIG.sound_aY = buffer;
+
+	  });
+	}
+	sound_aY_request.send();
+
+
+	//#################
+	//# Next Sound - Other not arrested
+	//#################
+
+	var sound_oN_request = new XMLHttpRequest();
+	sound_oN_request.open('GET', "/sounds/sound_oN.mp3", true);
+	sound_oN_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_oN_request.onload = function() {
+	  context.decodeAudioData(sound_oN_request.response, function(buffer) {
+	    CONFIG.sound_oN = buffer;
+
+	  });
+	}
+	sound_oN_request.send();
+
+	//#################
+	//# Next Sound - Other arrested
+	//#################
+
+	var sound_oY_request = new XMLHttpRequest();
+	sound_oY_request.open('GET', "/sounds/sound_oY.mp3", true);
+	sound_oY_request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+	sound_oY_request.onload = function() {
+	  context.decodeAudioData(sound_oY_request.response, function(buffer) {
+	    CONFIG.sound_oY = buffer;
+
+	  });
+	}
+	sound_oY_request.send();
+
+
+	//#################
+	//# Handle Playing
+	//#################
+	function playSound() {
+	  var source = context.createBufferSource(); // creates a sound source
+	  source.buffer = thisSound;                 // tell the source which sound to play
+	  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+	  source.noteOn(0);                          // play the source now
+	}
 
 })();
