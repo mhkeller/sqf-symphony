@@ -144,8 +144,17 @@
 			//Programatically
 
 			var current_time = new Date(ui.value*1000);
-			var current_time_string = String(current_time);
-			$('#time-display').html(current_time_string);
+			var current_time_array = String(current_time).split(' ');
+			console.log(current_time_array);
+			var week_day = current_time_array[0];
+			var month = current_time_array[1];
+			var date = current_time_array[2];
+			var year = current_time_array[3];
+			var time = current_time_array[4];
+			var time_array = time.split(':');
+			var hour = time_array[0];
+			var minute = time_array[1];
+			$('#time-display').html(week_day + ' ' + month + ' ' + date + ' ' + year + '<br/><span class="time">' + hour + ':' + minute + '</span>');
 
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
@@ -194,6 +203,7 @@
 	}
 
 	function stopTimer(){
+		console.log('there')
 		var end_int = clearInterval(time_var);
 	}
 
@@ -337,14 +347,27 @@
 	// 	console.log(month);
 	// });
 
+	$('#animation-drawer').on('click', '.month-select', function(){
+
+		// Only fire if it isn't already selected
+		if (!$(this).hasClass('selected')) {
+			playTimer();
+			var $playBtn = $('#play-btn');
+			$playBtn.html('Stop');
+			$playBtn.show();
+
+			$('.overlay-select').removeClass('selected');
+			$(this).addClass('selected');
+   		}
+	});
+
 	$('#play-btn').click( function(){
 		var $this = $(this);
-		if ($this.html() == 'play'){
-			$this.html('stop');
+		if ($this.html() == 'Play'){
+			$this.html('Stop');
 			playTimer();
-
 		}else{
-			$this.html('play');
+			$this.html('Play');
 			stopTimer();
 		}
 	});

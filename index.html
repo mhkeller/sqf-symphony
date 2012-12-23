@@ -24,13 +24,29 @@
 		<div class="viz-option overlay-select" data-viz-select="cumulative">--Cumulative counts--</div>
 	</div>
 	<div id="animation-drawer" class="overlay-box">
-		<div id="play-btn" class="overlay-select" style="padding:10px;float:left;">play</div>
-		<div class="month-select overlay-select" style="float:left;padding:10px;" data-month-select="january">January</div>
+		<div class="month-select-container" style="float:left;">
+			<div><strong>Select a month</strong>:
+				<span class="month-select overlay-select" data-month-select="jan" style="margin-left:25px;">Jan</span>
+				<span class="month-select overlay-select" data-month-select="feb">Feb</span>
+				<span class="month-select overlay-select" data-month-select="mar">Mar</span>
+				<span class="month-select overlay-select" data-month-select="apr">Apr</span>
+				<span class="month-select overlay-select" data-month-select="may">May</span>
+				<span class="month-select overlay-select" data-month-select="june">June</span>
+				<span class="month-select overlay-select" data-month-select="july">July</span>
+				<span class="month-select overlay-select" data-month-select="aug">Aug</span>
+				<span class="month-select overlay-select" data-month-select="sept">Sept</span>
+				<span class="month-select overlay-select" data-month-select="oct">Oct</span>
+				<span class="month-select overlay-select" data-month-select="nov">Nov</span>
+				<span class="month-select overlay-select" data-month-select="dec">Dec</span>
+			</div>
+		</div>
+		<div id="time-display"></div>
+		<div class="clearfix"></div>
+		<div id="play-btn" class="overlay-select">play</div>
 		<!-- <div id="animation-scrubber"></div> -->
 		<div id="slider-container">
 			<div id="slider"></div>
 		</div>
-		<div id="time-display" style="padding-left:5px;float:left;"></div>
 		<!-- <div id="area-chart-canvas"></div> -->
 	</div>
 	<div id="equalizer" class="overlay-box">
