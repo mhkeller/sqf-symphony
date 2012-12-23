@@ -161,6 +161,7 @@ html, body {
 	bottom: 14px;
 	position: absolute;
 	left: 140px;
+	display:none;
 }
 /* EQUALIZER */
 #equalizer{

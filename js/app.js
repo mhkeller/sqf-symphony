@@ -354,6 +354,7 @@
 
 			$('#animation-drawer .overlay-select').removeClass('selected');
 			$(this).addClass('selected');
+			$('#slider-container').show();
    		}
 	});
 
