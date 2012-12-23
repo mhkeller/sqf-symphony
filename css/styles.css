@@ -253,7 +253,7 @@ html, body {
 }
 #equalizer-y-axis-label-wrapper{
 	position:absolute;
-	left:5px;
+	left:10px;
 	bottom:36px;
 }
 #equalizer-legend{
