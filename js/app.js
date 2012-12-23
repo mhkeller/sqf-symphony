@@ -145,7 +145,6 @@
 
 			var current_time = new Date(ui.value*1000);
 			var current_time_array = String(current_time).split(' ');
-			console.log(current_time_array);
 			var week_day = current_time_array[0];
 			var month = current_time_array[1];
 			var date = current_time_array[2];
@@ -203,7 +202,6 @@
 	}
 
 	function stopTimer(){
-		console.log('there')
 		var end_int = clearInterval(time_var);
 	}
 
@@ -238,7 +236,6 @@
 	// 			CONFIG.current_month_data[u_t] = value;
 
 	// 		});
-	// 		console.log(CONFIG.current_month_data)
 
 	// 	} // End Success
 	// });
@@ -344,7 +341,6 @@
 	// });
 	// $('.month-select').click(function(){
 	// 	var month = $(this).attr('data-month-select');
-	// 	console.log(month);
 	// });
 
 	$('#animation-drawer').on('click', '.month-select', function(){
@@ -400,7 +396,7 @@
 	//#################
 
 	var sound_bN_request = new XMLHttpRequest();
-	sound_bN_request.open('GET', "/sounds/sound_bN.mp3", true);
+	sound_bN_request.open('GET', "sounds/sound_bN.mp3", true);
 	sound_bN_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -417,7 +413,7 @@
 	//#################
 
 	var sound_bY_request = new XMLHttpRequest();
-	sound_bY_request.open('GET', "/sounds/sound_bY.mp3", true);
+	sound_bY_request.open('GET', "sounds/sound_bY.mp3", true);
 	sound_bY_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -435,7 +431,7 @@
 	//#################
 
 	var sound_hN_request = new XMLHttpRequest();
-	sound_hN_request.open('GET', "/sounds/sound_hN.mp3", true);
+	sound_hN_request.open('GET', "sounds/sound_hN.mp3", true);
 	sound_hN_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -452,7 +448,7 @@
 	//#################
 
 	var sound_hY_request = new XMLHttpRequest();
-	sound_hY_request.open('GET', "/sounds/sound_hY.mp3", true);
+	sound_hY_request.open('GET', "sounds/sound_hY.mp3", true);
 	sound_hY_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -470,7 +466,7 @@
 	//#################
 
 	var sound_wN_request = new XMLHttpRequest();
-	sound_wN_request.open('GET', "/sounds/sound_wN.mp3", true);
+	sound_wN_request.open('GET', "sounds/sound_wN.mp3", true);
 	sound_wN_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -487,7 +483,7 @@
 	//#################
 
 	var sound_wY_request = new XMLHttpRequest();
-	sound_wY_request.open('GET', "/sounds/sound_wY.mp3", true);
+	sound_wY_request.open('GET', "sounds/sound_wY.mp3", true);
 	sound_wY_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -506,7 +502,7 @@
 	//#################
 
 	var sound_aN_request = new XMLHttpRequest();
-	sound_aN_request.open('GET', "/sounds/sound_aN.mp3", true);
+	sound_aN_request.open('GET', "sounds/sound_aN.mp3", true);
 	sound_aN_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -523,7 +519,7 @@
 	//#################
 
 	var sound_aY_request = new XMLHttpRequest();
-	sound_aY_request.open('GET', "/sounds/sound_aY.mp3", true);
+	sound_aY_request.open('GET', "sounds/sound_aY.mp3", true);
 	sound_aY_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -541,7 +537,7 @@
 	//#################
 
 	var sound_oN_request = new XMLHttpRequest();
-	sound_oN_request.open('GET', "/sounds/sound_oN.mp3", true);
+	sound_oN_request.open('GET', "sounds/sound_oN.mp3", true);
 	sound_oN_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
@@ -558,7 +554,7 @@
 	//#################
 
 	var sound_oY_request = new XMLHttpRequest();
-	sound_oY_request.open('GET', "/sounds/sound_oY.mp3", true);
+	sound_oY_request.open('GET', "sounds/sound_oY.mp3", true);
 	sound_oY_request.responseType = 'arraybuffer';
 
 	// Decode asynchronously
