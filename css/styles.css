@@ -171,7 +171,7 @@ html, body {
 	z-index: 8;
 }
 #equalizer-container{
-	height:92%;
+	height:88%;
 	float:left;
 }
 .col-wrapper{
@@ -256,6 +256,11 @@ html, body {
 	left:5px;
 	bottom:15px;
 }
+#equalizer-legend{
+	font-size:9px;
+	font-style:italic;
+}
+/* Time Display */
 #time-display{
 	width: 149px;
 	height: 60px;
