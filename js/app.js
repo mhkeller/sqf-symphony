@@ -208,7 +208,7 @@
 	}
 
 
-	d3.csv('data/head_sqf_edward2000.csv', function(csv){
+	d3.csv('data/sqf_edward_subset_jan.csv', function(csv){
 		// Nest the entries by unix_timestamp
 		var nested = d3.nest()
 		    .key(function(d) { return d.unix_time; })
@@ -356,7 +356,7 @@
 			$playBtn.html('Stop');
 			$playBtn.show();
 
-			$('.overlay-select').removeClass('selected');
+			$('#animation-drawer .overlay-select').removeClass('selected');
 			$(this).addClass('selected');
    		}
 	});
