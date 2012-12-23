@@ -249,12 +249,12 @@ html, body {
 }
 .y-axis-label{
 	text-align: right;
-	margin: 2px 2px 42px 0;
+	margin: 2px 2px 33px 0;
 }
 #equalizer-y-axis-label-wrapper{
 	position:absolute;
 	left:5px;
-	bottom:15px;
+	bottom:36px;
 }
 #equalizer-legend{
 	font-size:9px;
