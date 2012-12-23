@@ -1,5 +1,6 @@
 js/fullSymphony.js
-d3-area chart/stacked-area-chart-d3/
+d3-area-chart/
 libs/highcharts.js
 libs/jquery-ui-1.9.2.custom/
 libs/miso.ds.deps.ie.0.4.1.js
+sqf_slider
