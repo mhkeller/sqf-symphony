@@ -54,14 +54,14 @@
 
 	var popMarker = function(mark_number){
 		$('#marker_' + mark_number).delay(1)
-                                       .queue(function(n) {
-                                          $(this).addClass('expand-marker');
-                                       n();
-                                       })
-									   .css({
+									.queue(function(n) {
+										$(this).addClass('expand-marker');
+										n();
+									})
+									.css({
 										'margin-top': '-=' + CONFIG.marker_width/2 + 'px!important',
 										'margin-left': '-=' + CONFIG.marker_width/2 + 'px!important'
-		});
+									});
 		CONFIG.marker_number++;
 	}
 
@@ -130,6 +130,13 @@
 		popMarker(mark_number);
 	}
 
+	// Used to format the timestamp NYC time, instead of the user's time zone
+	moment.fn.formatInZone = function(format, offset) {
+   		return this.clone().utc().add('hours', offset).format(format);
+	}
+
+// moment().formatInZone('HH:mm:ss', -7);
+
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
     $( "#slider" ).slider({
 		value: 1293858000,
@@ -143,17 +150,16 @@
 		change: function(event,ui){
 			//Programatically
 
-			var current_time = new Date(ui.value*1000);
-			var current_time_array = String(current_time).split(' ');
-			var week_day = current_time_array[0];
-			var month = current_time_array[1];
-			var date = current_time_array[2];
-			var year = current_time_array[3];
-			var time = current_time_array[4];
-			var time_array = time.split(':');
-			var hour = time_array[0];
-			var minute = time_array[1];
-			$('#time-display').html(week_day + ' ' + month + ' ' + date + ' ' + year + '<br/><span class="time">' + hour + ':' + minute + '</span>');
+			// The human readable time at offset -5
+			// need to add support for daylight savings time
+			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM YYYY', -5);
+			var time_string = moment(ui.value*1000).formatInZone('HH:mm', -5);
+			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
+
+			// var day = day_wrapper.format('ddd MMM YYY');
+			console.log(typeof day_wrapper)
+
+			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
@@ -220,128 +226,6 @@
 		});
 
 	});
-
-	// var ds = new Miso.Dataset({
-	//   url : 'data/head_sqf_edward.csv',
-	//   delimiter : ','
-	// });
-
-	// ds.fetch({
-	// 	success : function() {
-
-	// 		var rows = this.toJSON();
-
-	// 		$.each(rows, function(key, value){
-	// 			var u_t = value.unix_time
-	// 			CONFIG.current_month_data[u_t] = value;
-
-	// 		});
-
-	// 	} // End Success
-	// });
-
-
-	 //    var chart = new Highcharts.Chart({
-		//     chart: {
-		//         renderTo: 'area-chart-canvas',
-		//         type: 'area',
-		//         // margin: 0,
-		//         spacingBottom: 3,
-		//         spacingLeft: -50,
-		//         spacingRight: -20
-		//     },
-		//     legend:{
-		//     	enabled: false
-		//     },
-		//     title: {
-		//         text: ''
-		//     },
-		//     subtitle: {
-		//         text: ''
-		//     },
-		//     xAxis: {
-		//     	gridLineWidth: -1,
-		//     	enabled: false,
-		//         categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
-		//         title: {
-		//             enabled: false
-		//         }
-		//     },
-		//     yAxis: {
-		//     	gridLineWidth: -1,
-		//     	enabled: false,
-		//         title: {
-		//             text: ''
-		//         },
-		//         labels: {
-		//             formatter: function() {
-		//                 return this.value / 1000;
-		//             }
-		//         }
-		//     },
-		//     tooltip: {
-		//         formatter: function() {
-		//             return ''+
-		//                 this.x +': '+ Highcharts.numberFormat(this.y, 0, ',') +' millions';
-		//         },
-		// 		borderRadius:1,
-		// 		borderWidth:1,
-		// 		shadow:false
-		//     },
-		//     plotOptions: {
-		//         area: {
-		//             stacking: 'normal',
-		//             lineColor: '#666666',
-		//             lineWidth: 0,
-		//             marker: {
-		//                 lineWidth: 0,
-		//                 lineColor: 'transparent',
-		//                 enabled: false,
-		//                 states: {
-	 //                        hover: {
-	 //                            enabled: false
-	 //                        }
-	 //                    }
-		//             }
-		//         }
-		//     },
-		//     credits:{
-		//     	enabled: false
-		//     },
-		//     series: [{
-		// 	        name: 'Asia',
-		// 	        color: '#3887bf',
-		// 	        data: [502, 635, 809, 947, 1402, 3634, 5268]
-		// 	    }, {
-		// 	        name: 'Africa',
-		// 	        color: '#e05b18',
-		// 	        data: [106, 107, 111, 133, 221, 767, 1766]
-		// 	    }, {
-		// 	        name: 'Europe',
-		// 	        color: '#34a359',
-		// 	        data: [163, 203, 276, 408, 547, 729, 628]
-		// 	    }, {
-		// 	        name: 'America',
-		// 	        color: '#bd1f8c',
-		// 	        data: [18, 31, 54, 156, 339, 818, 1201]
-		//     }]
-		// }); // End Highcharts
-
-
-	// $('#area-chart-canvas').hover( function(){
-	// 	$('#animation-scrubber').show();
-	// }, function(){
-	// 	$('#animation-scrubber').hide();
-	// });
-
-	// $('#area-chart-canvas').mousemove(function(e){
-	// 	$('#animation-scrubber').offset({
-	// 		'left': e.pageX - 20
-	// 	})
-	// });
-	// $('.month-select').click(function(){
-	// 	var month = $(this).attr('data-month-select');
-	// });
 
 	$('#animation-drawer').on('click', '.month-select', function(){
 

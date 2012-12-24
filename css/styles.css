@@ -277,6 +277,13 @@ html, body {
 	font-size: 37px;
 	color:#31D6EC;
 }
+.am_pm{
+	font-size: 12px;
+	right: 15px;
+	position: absolute;
+	bottom: 6px;
+
+}
 .inactive{
 	color:#ccc;
 	display:inline-block;
