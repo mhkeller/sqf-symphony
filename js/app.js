@@ -152,12 +152,11 @@
 
 			// The human readable time at offset -5
 			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM YYYY', -5);
+			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', -5);
 			var time_string = moment(ui.value*1000).formatInZone('HH:mm', -5);
 			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
 
 			// var day = day_wrapper.format('ddd MMM YYY');
-			console.log(typeof day_wrapper)
 
 			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
