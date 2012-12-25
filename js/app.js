@@ -156,8 +156,6 @@
 			var time_string = moment(ui.value*1000).formatInZone('HH:mm', -5);
 			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
 
-			// var day = day_wrapper.format('ddd MMM YYY');
-
 			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
 			if (CONFIG.current_month_data[ui.value]){
