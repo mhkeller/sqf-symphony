@@ -70,10 +70,6 @@
 										$(this).addClass('expand-marker');
 										n();
 									})
-									.css({
-										'margin-top': '-=' + CONFIG.marker_width/2 + 'px!important',
-										'margin-left': '-=' + CONFIG.marker_width/2 + 'px!important'
-									});
 		CONFIG.marker_number++;
 	}
 

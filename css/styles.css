@@ -48,6 +48,8 @@ html, body {
 	position:absolute;
 	width:0px;
 	height:0px;
+	margin-top:0px;
+	margin-left:0px;
 	background-color:red;
 	border-radius:50%;
 	transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
@@ -65,6 +67,8 @@ html, body {
 .expand-marker{
 	height:80px;
 	width:80px;
+	margin-top:-40px!important;
+	margin-left:-40px!important;
 	opacity:0;
 }
 .overlay-box{
