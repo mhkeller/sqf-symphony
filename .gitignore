@@ -4,3 +4,5 @@ libs/highcharts.js
 libs/jquery-ui-1.9.2.custom/
 libs/miso.ds.deps.ie.0.4.1.js
 sqf_slider
+data/sunrise_sunset.csv
+data/sunrise_sunset.xlsx

@@ -4,6 +4,8 @@
 		marker_width: 80,
 		animation_speed: 50,
 		current_month_data: {},
+		sunrise_sunset: {},
+		night: true,
 		start_lat: 40.81069108268215,
 		start_lng: -73.94622802734375,
 		na_lat: 40.909361,
@@ -49,6 +51,16 @@
 		}else if (race == 'U'){
 			// Another way NYPD marks other, although not officially in the codebook
 			return 'o';
+		}
+	}
+
+	var changeTile = function(changed){
+		if (changed == false){
+		  	map.removeLayer(night_layer);
+		  	map.addLayer(day_layer);
+		}else{
+		  	map.removeLayer(day_layer);
+		  	map.addLayer(night_layer);
 		}
 	}
 
@@ -153,8 +165,30 @@
 			// The human readable time at offset -5
 			// need to add support for daylight savings time
 			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', -5);
-			var time_string = moment(ui.value*1000).formatInZone('HH:mm', -5);
+			var time_string = moment(ui.value*1000).formatInZone('hh:mm', -5);
+			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', -5);
 			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
+
+			// The month, date and hour for the sunrise, sunset
+			var month = moment(ui.value*1000).formatInZone('M', -5);
+			var day = moment(ui.value*1000).formatInZone('D', -5);
+
+			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+
+			// day-1 so that the day matches the node number
+			// a little hacky but avoids renesting the data
+			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+
+			var today_sunrise = today_sunriseSunset.rise;
+			var today_sunset  = today_sunriseSunset.set;
+
+			// Change the map tile based on the sunrise and sunset time
+			// console.log(today_sunrise, today_sunset, time_string24h)
+			if (today_sunrise == time_string24h || today_sunset == time_string24h){
+				CONFIG.night = !CONFIG.night;
+				changeTile(CONFIG.night);
+			}
+
 
 			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
@@ -218,8 +252,22 @@
 		// Create a hash for this month's data that can be accessed
 		// via the unix_timestamp
 		nested.forEach(function(o){
-			u_t = o.key;
-			CONFIG.current_month_data[u_t] = o.values
+			var u_t = o.key;
+			CONFIG.current_month_data[u_t] = o.values;
+		});
+
+	});
+
+	d3.csv('data/sunrise_sunset_clean.csv', function(times){
+		// Nest the entries by month
+		var nested_times = d3.nest()
+		    .key(function(d) { return d.month; })
+		    .entries(times);
+
+		// Create a hash that can be accessed by the month as a number
+		nested_times.forEach(function(o){
+			var m_d = o.key;
+			CONFIG.sunrise_sunset[m_d] = o.values;
 		});
 
 	});
@@ -250,23 +298,25 @@
 		}
 	});
 
-	// create a map in the "map" div, set the view to a given place and zoom
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
-	// replace "toner" here with "terrain" or "watercolor"
-	// var layer = new L.StamenTileLayer("toner-background");
-	var tile_url = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png'
-	var layer = new L.TileLayer(tile_url, {attribution:"Mapbox"});
-	map.addLayer(layer);
-	// var marker = L.marker([40.81069108268215, -73.94622802734375]).addTo(map);
+	var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png';
+	var night_url = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/82102/256/{z}/{x}/{y}.png';
+	var day_layer   = new L.TileLayer(day_url,   {attribution:"Mapbox"});
+	var night_layer = new L.TileLayer(night_url, {attribution:"Mapbox"});
+
+	map.addLayer(night_layer);
+
 
 	// Test
 	$(document).keyup(function(e) {
 	  if (e.keyCode == 27){
-		$('.leaflet-marker-custom').addClass('expand-marker').css({
-			'margin-top': '-=' + CONFIG.marker_width/2 + 'px!important',
-			'margin-left': '-=' + CONFIG.marker_width/2 + 'px!important'
-		});
+	  	map.removeLayer(day_layer);
+	  	map.addLayer(night_layer);
+		// $('.leaflet-marker-custom').addClass('expand-marker').css({
+		// 	'margin-top': '-=' + CONFIG.marker_width/2 + 'px!important',
+		// 	'margin-left': '-=' + CONFIG.marker_width/2 + 'px!important'
+		// });
 	  }
 	});
 
