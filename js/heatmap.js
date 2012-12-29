@@ -22,7 +22,17 @@
 	    	var week_number = Math.ceil(day_of_the_month/7);
 	    	return week_number;
 	    },
-	    percent = d3.format(".1%"),
+	    addCommas = function(nStr){
+    	    nStr += '';
+		    var x = nStr.split('.');
+		    var x1 = x[0];
+		    var x2 = x.length > 1 ? '.' + x[1] : '';
+		    var rgx = /(\d+)(\d{3})/;
+		    while (rgx.test(x1)) {
+		      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		    }
+		    return x1 + x2;
+	    }
 	    format = d3.time.format("%Y-%m-%d");
 
 	var color = d3.scale.quantize()
@@ -86,7 +96,7 @@
 	  rect.filter(function(d) { return d in data; })
 	      .attr("class", function(d) { return "day " + color(data[d]); })
 	    .select("title")
-	      .text(function(d) { return d + ": " + percent(data[d]); });
+	      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; });
 	});
 }
 
