@@ -54,14 +54,30 @@
 		}
 	}
 
-	var changeTile = function(changed){
-		if (changed == false){
-		  	map.removeLayer(night_layer);
-		  	map.addLayer(day_layer);
-		}else{
-		  	map.removeLayer(day_layer);
-		  	map.addLayer(night_layer);
-		}
+	var sunTimes = function(current_time, current_sunrise, current_sunset){
+		var time = moment(current_time, "HH:mm");
+		var sunrise = moment(current_sunrise, "HH:mm");
+		var sunset = moment(current_sunset, "HH:mm");
+
+		if (time < sunrise){
+			map.removeLayer(day_layer);
+			map.addLayer(night_layer);
+		}else if(time < sunset){
+	  		map.removeLayer(night_layer);
+	  		map.addLayer(day_layer);
+	  	}else{
+			map.removeLayer(day_layer);
+			map.addLayer(night_layer);
+	  	}
+
+
+		// if (changed == false){
+		//   	map.removeLayer(night_layer);
+		//   	map.addLayer(day_layer);
+		// }else{
+		//   	map.removeLayer(day_layer);
+		//   	map.addLayer(night_layer);
+		// }
 	}
 
 	var popMarker = function(mark_number){
@@ -178,12 +194,10 @@
 			var today_sunrise = today_sunriseSunset.rise;
 			var today_sunset  = today_sunriseSunset.set;
 
-			// Change the map tile based on the sunrise and sunset time
-			// console.log(today_sunrise, today_sunset, time_string24h)
-			if (today_sunrise == time_string24h || today_sunset == time_string24h){
-				CONFIG.night = !CONFIG.night;
-				changeTile(CONFIG.night);
-			}
+			// Check whether the sun has risen or set
+			sunTimes(time_string24h, today_sunrise, today_sunset);
+
+
 
 
 			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
@@ -200,13 +214,32 @@
 		slide: function(event, ui) {
 			//manually
 
-			// startingTime = ui.value;
-			// realTime = new Date((ui.value)*1000)
-			// var realTimeString = String(realTime)
-			// $( "#time_display" ).html(realTimeString);
+			// The human readable time at offset -5
+			// need to add support for daylight savings time
+			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', -5);
+			var time_string = moment(ui.value*1000).formatInZone('hh:mm', -5);
+			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', -5);
+			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
 
-			//loopFeatures();
-			//createJSONLists();
+			// The month, date and hour for the sunrise, sunset
+			var month = moment(ui.value*1000).formatInZone('M', -5);
+			var day = moment(ui.value*1000).formatInZone('D', -5);
+
+			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+
+			// day-1 so that the day matches the node number
+			// a little hacky but avoids renesting the data
+			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+
+			var today_sunrise = today_sunriseSunset.rise;
+			var today_sunset  = today_sunriseSunset.set;
+
+			// Check whether the sun has risen or set
+			sunTimes(time_string24h, today_sunrise, today_sunset);
+
+			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+
+
 		}
 	});
 
