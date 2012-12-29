@@ -6,3 +6,5 @@
 
 <p>Demo: <a href="http://mhkeller.github.com/sqf-symphony" target="_blank">http://mhkeller.github.com/sqf-symphony</a></p>
 <p>Pull requests in other keys welcome.</p>
+
+<p>Data sources: <a href="http://www.nyc.gov/html/nypd/html/analysis_and_planning/stop_question_and_frisk_report.shtml" target="_blank">NYPD</a>, <a href="http://aa.usno.navy.mil/" target-"_blank">Sunrise/Sunset data from U.S. Naval Observatory</a></p>
