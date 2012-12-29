@@ -160,8 +160,21 @@
    		return this.clone().utc().add('hours', offset).format(format);
 	}
 
-// moment().formatInZone('HH:mm:ss', -7);
 
+	var calculateDayLightSavings = function(unix_timestamp){
+		// 2am March 13th, 2011, NYC Time
+		var GMT_begin_daylightsavings = 1299996000;
+		// 2am Nov 6, 2011, NYC Time
+		var GMT_end_daylightsavings = 1320562800;
+
+		if (unix_timestamp < GMT_begin_daylightsavings){
+			return -5
+		}else if (unix_timestamp < GMT_end_daylightsavings){
+			return -4
+		}else{
+			return -5
+		}
+	}
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
     $( "#slider" ).slider({
 		// value: 1293858000,
@@ -175,16 +188,17 @@
 		change: function(event,ui){
 			//Programatically
 
+			var offset = calculateDayLightSavings(Number(ui.value))
 			// The human readable time at offset -5
 			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', -5);
-			var time_string = moment(ui.value*1000).formatInZone('hh:mm', -5);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', -5);
-			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
+			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
+			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
+			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
+			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
 
 			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', -5);
-			var day = moment(ui.value*1000).formatInZone('D', -5);
+			var month = moment(ui.value*1000).formatInZone('M', offset);
+			var day = moment(ui.value*1000).formatInZone('D', offset);
 
 			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
 
@@ -215,16 +229,17 @@
 		slide: function(event, ui) {
 			//manually
 
+			var offset = calculateDayLightSavings(Number(ui.value))
 			// The human readable time at offset -5
 			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', -5);
-			var time_string = moment(ui.value*1000).formatInZone('hh:mm', -5);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', -5);
-			var am_pm = moment(ui.value*1000).formatInZone('a', -5);
+			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
+			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
+			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
+			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
 
 			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', -5);
-			var day = moment(ui.value*1000).formatInZone('D', -5);
+			var month = moment(ui.value*1000).formatInZone('M', offset);
+			var day = moment(ui.value*1000).formatInZone('D', offset);
 
 			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
 
@@ -237,6 +252,7 @@
 
 			// Check whether the sun has risen or set
 			sunTimes(time_string24h, today_sunrise, today_sunset);
+
 
 			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
