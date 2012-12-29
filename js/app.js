@@ -6,6 +6,7 @@
 		current_month_data: {},
 		sunrise_sunset: {},
 		night: true,
+		isPlaying: false,
 		start_lat: 40.81069108268215,
 		start_lng: -73.94622802734375,
 		na_lat: 40.909361,
@@ -163,9 +164,9 @@
 
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
     $( "#slider" ).slider({
-		value: 1293858000,
-		min: 1293858000,
-		max: 1296536399,
+		// value: 1293858000,
+		// min: 1293858000,
+		// max: 1296536399,
 		step: 60,
 		stop: function(event,ui){
 			// preventDefault = true;
@@ -246,7 +247,6 @@
 	function timer(){
 		//grab the current tiem from the slider
 		var interval = $("#slider").slider("value");
-
 		var one_minute = 60;
 		//add a minute to it in unix time
 		interval = interval + one_minute;
@@ -255,37 +255,96 @@
 		unix_timeStamp = interval;
 
 		//generate a pretty time for the time box
-		realTime = new Date(unix_timeStamp*1000)
-		var realTimeString = String(realTime)
+		realTime = new Date(unix_timeStamp*1000);
+		var realTimeString = String(realTime);
 
 		//set the slider value
 		//the slider's events handle the rest
-		$("#slider").slider("value",interval)
+		$("#slider").slider("value",interval);
 	}
 
 	function playTimer(){
 		window.time_var = setInterval(function(){timer()}, CONFIG.animation_speed);
+		$('#play-btn').html('Stop');
+		CONFIG.isPlaying = true;
 	}
 
 	function stopTimer(){
 		var end_int = clearInterval(time_var);
+		$('#play-btn').html('Play');
+		CONFIG.isPlaying = false;
+	}
+
+	var clearData = function(){
+		if (CONFIG.isPlaying == true){
+			stopTimer();
+		};
+		CONFIG.current_month_data = {};
+
+
+	}
+
+	var resetSlider = function(month_id){
+		var days;
+		if (month_id == 4 || month_id == 6 || month_id == 9 || month_id == 11){
+			days = 30
+		}else if (month_id == 2){
+			days = 28
+		}else{
+			days = 31
+		}
+
+		var start_date = new Date(2011, (month_id-1), 1).getTime()/1000;
+		var end_date   = new Date(2011, (month_id-1), days).getTime()/1000;
+
+
+
+		$("#slider").slider('option',{min: start_date, max: end_date});
+		$("#slider").slider('value',start_date);
+	}
+
+	var pullData = function(month_display){
+		d3.csv('data/sqf_edward_subset_'+month_display+'.csv', function(csv){
+			// Nest the entries by unix_timestamp
+			var nested = d3.nest()
+			    .key(function(d) { ;return d.unix_time; })
+			    .entries(csv);
+
+			var time_array = [];
+			// Create a hash for this month's data that can be accessed
+			// via the unix_timestamp
+			nested.forEach(function(o){
+				var u_t = o.key;
+				CONFIG.current_month_data[u_t] = o.values;
+			});
+			resetSlider(Number(month_display));
+			// When done constructing the data, start playing
+			$('#play-btn').show();
+			$('#slider-container').show();
+			playTimer();
+
+
+		});
+
 	}
 
 
-	d3.csv('data/sqf_edward_subset_jan.csv', function(csv){
-		// Nest the entries by unix_timestamp
-		var nested = d3.nest()
-		    .key(function(d) { return d.unix_time; })
-		    .entries(csv);
 
-		// Create a hash for this month's data that can be accessed
-		// via the unix_timestamp
-		nested.forEach(function(o){
-			var u_t = o.key;
-			CONFIG.current_month_data[u_t] = o.values;
-		});
 
-	});
+	// d3.csv('data/sqf_edward_subset_jan.csv', function(csv){
+	// 	// Nest the entries by unix_timestamp
+	// 	var nested = d3.nest()
+	// 	    .key(function(d) { return d.unix_time; })
+	// 	    .entries(csv);
+
+	// 	// Create a hash for this month's data that can be accessed
+	// 	// via the unix_timestamp
+	// 	nested.forEach(function(o){
+	// 		var u_t = o.key;
+	// 		CONFIG.current_month_data[u_t] = o.values;
+	// 	});
+
+	// });
 
 	d3.csv('data/sunrise_sunset_clean.csv', function(times){
 		// Nest the entries by month
@@ -301,28 +360,25 @@
 
 	});
 
-	$('#animation-drawer').on('click', '.month-select', function(){
+	$('#animation-drawer').on('click', '.month-select-text', function(){
 
 		// Only fire if it isn't already selected
 		if (!$(this).hasClass('selected')) {
-			playTimer();
-			var $playBtn = $('#play-btn');
-			$playBtn.html('Stop');
-			$playBtn.show();
+			var month_display = $(this).attr('data-month-select');
+			clearData();
+			pullData(month_display);
 
+			// CSS
 			$('#animation-drawer .overlay-select').removeClass('selected');
 			$(this).addClass('selected');
-			$('#slider-container').show();
+
    		}
 	});
 
 	$('#play-btn').click( function(){
-		var $this = $(this);
-		if ($this.html() == 'Play'){
-			$this.html('Stop');
+		if (CONFIG.isPlaying == false){
 			playTimer();
 		}else{
-			$this.html('Play');
 			stopTimer();
 		}
 	});
