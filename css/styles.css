@@ -44,6 +44,14 @@ html, body {
 #headline a:hover{
 	color:#31D6EC;
 }
+.month-select{
+	float: left;
+	width: 50px;
+	height: 93px;
+	text-align: center;
+	margin-top:-2px;
+	padding-top:2px;
+}
 .leaflet-marker-custom{
 	position:absolute;
 	width:0px;
@@ -80,16 +88,6 @@ html, body {
 	font-size:12px;
 	line-height:18px;
 }
-#month-select{
-	top:0;
-	right:0;
-	width:300px;
-}
-.month-select{
-	display:inline-block;
-	width:50px;
-	text-align:center;
-}
 .overlay-select{
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -104,6 +102,7 @@ html, body {
 	color:#31D6EC;
 	cursor:pointer;
 	cursor:hand;
+	background-color:rgba(255, 250, 209, .75)
 }
 .overlay-select.selected{
 	font-weight:bold;
@@ -135,9 +134,9 @@ html, body {
 }
 #animation-drawer{
 	top: 0;
-	left: 175px;
+	left: 50px;
 	width:920px;
-	height: 56px;
+	height: 75px;
 	z-index: 9;
 	padding: 10px 5px 10px 10px;
 }
@@ -171,8 +170,8 @@ html, body {
 #equalizer{
 	width: 205px;
 	height: 300px;
-	top: 76px;
-	left: 50px;
+	top: 95px;
+	left: 780px;
 	z-index: 8;
 }
 #equalizer-container{
@@ -269,13 +268,14 @@ html, body {
 #time-display{
 	width: 149px;
 	height: 60px;
-	float: left;
+	float: right;
 	text-align: center;
 	font-size: 19px;
 	margin-left: 13px;
 	margin-right: 5px;
 }
 .time{
+	position: relative;
 	padding-top: 15px;
 	display: inline-block;
 	font-size: 37px;
@@ -283,9 +283,9 @@ html, body {
 }
 .am_pm{
 	font-size: 12px;
-	right: 15px;
+	right: -21px;
 	position: absolute;
-	bottom: 6px;
+	bottom: -7px;
 
 }
 .inactive{
@@ -299,4 +299,38 @@ html, body {
 	color:#ccc!important;
 	text-decoration:none;
 }
-​
+/*​ HEAT MAP STYLES */
+#heat-maps{
+	margin-left: 74px;
+	margin-top: -8px;
+}
+.month-select-text{
+	margin-bottom:5px;
+}
+body {
+  shape-rendering: crispEdges;
+}
+
+.day {
+  fill: transparent;
+  stroke: #454545;
+  stroke-width:1px;
+}
+
+.month {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.RdYlGn .q0-11{fill:#08589E;}
+.RdYlGn .q1-11{fill:#2B8CBE;}
+.RdYlGn .q2-11{fill:#4EB3D3;}
+.RdYlGn .q3-11{fill:#7BCCC4;}
+.RdYlGn .q4-11{fill:#A8DDB5;}
+.RdYlGn .q5-11{fill:#CCEBC5;}
+
+.heat-map-container{
+	float:left;
+	width:15px;
+}

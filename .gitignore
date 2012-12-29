@@ -6,3 +6,6 @@ libs/miso.ds.deps.ie.0.4.1.js
 sqf_slider
 data/sunrise_sunset.csv
 data/sunrise_sunset.xlsx
+calendar-heat-map.html
+data/dji.csv
+dc.csv

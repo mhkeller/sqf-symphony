@@ -21,116 +21,166 @@
 	<script src="libs/moment.min.js"></script>
 </head>
 <body>
-	<div id="viz-select" class="overlay-box">
+<!-- 	<div id="viz-select" class="overlay-box">
 		<div class="viz-option overlay-select selected" data-viz-select="animation">--Animation--</div>
 		<div class="viz-option overlay-select" data-viz-select="cumulative">--Cumulative counts--</div>
 	</div>
-	<div id="animation-drawer" class="overlay-box">
-		<div class="month-select-container" style="float:left;">
-			<div><strong>Select a month</strong>:
-				<span class="month-select overlay-select" data-month-select="jan" style="margin-left:25px;">Jan</span>
-				<span class="overlay-select inactive" data-month-select="feb">Feb</span>
-				<span class="overlay-select inactive" data-month-select="mar">Mar</span>
-				<span class="overlay-select inactive" data-month-select="apr">Apr</span>
-				<span class="overlay-select inactive" data-month-select="may">May</span>
-				<span class="overlay-select inactive" data-month-select="june">June</span>
-				<span class="overlay-select inactive" data-month-select="july">July</span>
-				<span class="overlay-select inactive" data-month-select="aug">Aug</span>
-				<span class="overlay-select inactive" data-month-select="sept">Sept</span>
-				<span class="overlay-select inactive" data-month-select="oct">Oct</span>
-				<span class="overlay-select inactive" data-month-select="nov">Nov</span>
-				<span class="overlay-select inactive" data-month-select="dec">Dec</span>
+ -->	<div id="animation-drawer" class="overlay-box">
+ 			<div id="month-select">
+ 				<div style="float:left;">Select a month:</div>
+				<div class="month-select overlay-select" data-month-select="jan" style="margin-left:5px;">
+					<div class="month-select-text" data-month-select="0">Jan</div>
+					<div id="heat-map-0"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="feb">
+					<div class="month-select-text" data-month-select="1">Feb</div>
+					<div id="heat-map-1"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="mar">
+					<div class="month-select-text" data-month-select="2">Mar</div>
+					<div id="heat-map-2"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="apr">
+					<div class="month-select-text" data-month-select="3">Apr</div>
+					<div id="heat-map-3"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="may">
+					<div class="month-select-text" data-month-select="4">May</div>
+					<div id="heat-map-4"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="june">
+					<div class="month-select-text" data-month-select="5">June</div>
+					<div id="heat-map-5"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="july">
+					<div class="month-select-text" data-month-select="6">July</div>
+					<div id="heat-map-6"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="aug">
+					<div class="month-select-text" data-month-select="7">Aug</div>
+					<div id="heat-map-7"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="sept">
+					<div class="month-select-text" data-month-select="8">Sept</div>
+					<div id="heat-map-8"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="oct">
+					<div class="month-select-text" data-month-select="9">Oct</div>
+					<div id="heat-map-9"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="nov">
+					<div class="month-select-text" data-month-select="10">Nov</div>
+					<div id="heat-map-10"></div>
+				</div>
+				<div class="month-select overlay-select" data-month-select="dec">
+					<div class="month-select-text" data-month-select="11">Dec</div>
+					<div id="heat-map-11"></div>
+				</div>
+ 				<div id="heat-maps">
+ 					<div id="heat-map-0" class="heat-map-container"></div>
+ 					<div id="heat-map-1" class="heat-map-container"></div>
+ 					<div id="heat-map-2" class="heat-map-container"></div>
+ 					<div id="heat-map-3" class="heat-map-container"></div>
+ 					<div id="heat-map-4" class="heat-map-container"></div>
+ 					<div id="heat-map-5" class="heat-map-container"></div>
+ 					<div id="heat-map-6" class="heat-map-container"></div>
+ 					<div id="heat-map-7" class="heat-map-container"></div>
+ 					<div id="heat-map-8" class="heat-map-container"></div>
+ 					<div id="heat-map-9" class="heat-map-container"></div>
+ 					<div id="heat-map-10" class="heat-map-container"></div>
+ 					<div id="heat-map-11" class="heat-map-container"></div>
+ 				</div>
+ 			</div>
+			<div id="time-display">Sat Jan 1 2011<br/><span class="time">12:00 <span class="am_pm">am</span></span></div>
+			<div class="clearfix"></div>
+			<div id="play-btn" class="overlay-select">play</div>
+			<!-- <div id="animation-scrubber"></div> -->
+			<div id="slider-container">
+				<div id="slider"></div>
+			</div>
+			<!-- <div id="area-chart-canvas"></div> -->
+		</div>
+		<div id="equalizer" class="overlay-box">
+			<div id="equalizer-y-axis-container">
+				<div id="equalizer-y-axis-label-wrapper">
+					<div class="y-axis-label">8</div>
+					<div class="y-axis-label">6</div>
+					<div class="y-axis-label">4</div>
+					<div class="y-axis-label">2</div>
+				</div>
+			</div>
+			<div id="equalizer-container">
+				<div id="col-bN" class="col-wrapper first-col left-col">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-bY" class="col-wrapper">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-hN" class="col-wrapper left-col">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-hY" class="col-wrapper">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-wN" class="col-wrapper left-col">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-wY" class="col-wrapper">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-aN" class="col-wrapper left-col">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-aY" class="col-wrapper">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-oN" class="col-wrapper left-col">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+				<div id="col-oY" class="col-wrapper">
+				    <div class="bar-container">
+				        <div class="bar initial-bar"></div>
+				    </div>
+				</div>
+			</div>
+			<div id="equalizer-x-axis-container">
+				<div class="x-axis-label">Black</div>
+				<div class="x-axis-label">Hisp.</div>
+				<div class="x-axis-label">White</div>
+				<div class="x-axis-label">Asian</div>
+				<div class="x-axis-label">Oth.</div>
+			</div>
+			<div id="equalizer-legend">
+				*Darker colors / lower tones denote arrests.
 			</div>
 		</div>
-		<div id="time-display">Sat Jan 1 2011<br/><span class="time">12:00 <span class="am_pm">am</span></span></div>
-		<div class="clearfix"></div>
-		<div id="play-btn" class="overlay-select">play</div>
-		<!-- <div id="animation-scrubber"></div> -->
-		<div id="slider-container">
-			<div id="slider"></div>
-		</div>
-		<!-- <div id="area-chart-canvas"></div> -->
-	</div>
-	<div id="equalizer" class="overlay-box">
-		<div id="equalizer-y-axis-container">
-			<div id="equalizer-y-axis-label-wrapper">
-				<div class="y-axis-label">8</div>
-				<div class="y-axis-label">6</div>
-				<div class="y-axis-label">4</div>
-				<div class="y-axis-label">2</div>
-			</div>
-		</div>
-		<div id="equalizer-container">
-			<div id="col-bN" class="col-wrapper first-col left-col">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-bY" class="col-wrapper">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-hN" class="col-wrapper left-col">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-hY" class="col-wrapper">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-wN" class="col-wrapper left-col">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-wY" class="col-wrapper">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-aN" class="col-wrapper left-col">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-aY" class="col-wrapper">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-oN" class="col-wrapper left-col">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-			<div id="col-oY" class="col-wrapper">
-			    <div class="bar-container">
-			        <div class="bar initial-bar"></div>
-			    </div>
-			</div>
-		</div>
-		<div id="equalizer-x-axis-container">
-			<div class="x-axis-label">Black</div>
-			<div class="x-axis-label">Hisp.</div>
-			<div class="x-axis-label">White</div>
-			<div class="x-axis-label">Asian</div>
-			<div class="x-axis-label">Oth.</div>
-		</div>
-		<div id="equalizer-legend">
-			*Darker colors / lower tones denote arrests.
-		</div>
-	</div>
-<!-- 	<div id="month-select" class="overlay-box">
-		<span>Select a month:</span>
-		<span class="month-select overlay-select" data-month-select="january">January</span>
-	</div> -->
- 	<div id="map-canvas"></div>
- 	<div id="headline">
- 		<h1 style="display:inline;">SQF Symphony</h1> &#151; <h4 style="display:inline;">a visual and aural tour through a year's worth of stop, question, and frisks.</h4> <a href="http://github.com/mhkeller/sqf-symphony" target="_blank" style="margin-left:5px;"><em>about</em></a>
- 	</div>
-	<script src="js/app.js"></script>
+	<!-- 	<div id="month-select" class="overlay-box">
+			<span>Select a month:</span>
+			<span class="month-select overlay-select" data-month-select="january">January</span>
+		</div> -->
+	 	<div id="map-canvas"></div>
+	 	<div id="headline">
+	 		<h1 style="display:inline;">SQF Symphony</h1> &#151; <h4 style="display:inline;">a visual and aural tour through a year's worth of stop, question, and frisks.</h4> <a href="http://github.com/mhkeller/sqf-symphony" target="_blank" style="margin-left:5px;"><em>about</em></a>
+	 	</div>
+		<script src="js/app.js"></script>
+		<script src="js/heatmap.js"></script>
 </body>
 </html>
