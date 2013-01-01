@@ -5,7 +5,8 @@
 	};
 
 	var SETTINGS = {
-		block_width: 34.6
+		block_width: 34.6,
+		color_bins: 7
 	}
 
 	var width = 50,
@@ -35,9 +36,9 @@
 	    }
 	    format = d3.time.format("%Y-%m-%d");
 
-	var color = d3.scale.quantize()
-	    .domain([311, 3255])
-	    .range(d3.range(6).map(function(d) { return "q" + d + "-11"; }));
+	var color = d3.scale.linear()
+	    .domain([0, 3500])
+	    .range([1, SETTINGS.color_bins]);
 
 	// Hack for plotting the months as separate svg elements
 	// so they can have spaces between them and be used as buttons
@@ -52,7 +53,7 @@
 	  .enter().append("svg")
 	    .attr("width", width)
 	    .attr("height", height)
-	    .attr("class", "RdYlGn")
+	    .attr("class", "heat-map-box")
 
 	// svg.append("text")
 	//     .attr("transform", "translate(-6," + cellSize * 3.5 + ")rotate(-90)")
@@ -94,7 +95,7 @@
 	  DATA.max = d3.max(stop_array);
 	  DATA.min = d3.min(stop_array);
 	  rect.filter(function(d) { return d in data; })
-	      .attr("class", function(d) { return "day " + color(data[d]); })
+	      .attr("class", function(d) { return "day box-" + Math.round(color(data[d])); })
 	    .select("title")
 	      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; });
 	});

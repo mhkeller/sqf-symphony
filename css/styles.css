@@ -323,12 +323,13 @@ body {
   stroke-width: 2px;
 }
 
-.RdYlGn .q0-11{fill:#08589E;}
-.RdYlGn .q1-11{fill:#2B8CBE;}
-.RdYlGn .q2-11{fill:#4EB3D3;}
-.RdYlGn .q3-11{fill:#7BCCC4;}
-.RdYlGn .q4-11{fill:#A8DDB5;}
-.RdYlGn .q5-11{fill:#CCEBC5;}
+.heat-map-box .box-7{fill:#FFFFCC;}
+.heat-map-box .box-6{fill:#C7E9B4;}
+.heat-map-box .box-5{fill:#7FCDBB;}
+.heat-map-box .box-4{fill:#41B6C4;}
+.heat-map-box .box-3{fill:#1D91C0;}
+.heat-map-box .box-2{fill:#225EA8;}
+.heat-map-box .box-1{fill:#0C2C84;}
 
 .heat-map-container{
 	float:left;

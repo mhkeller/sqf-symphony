@@ -142,6 +142,7 @@
 
 		playSound(race_arstmade);
 		addMarker(mark_number, lat, lng, race_arstmade);
+		popMarker(mark_number);
 		addBar(mark_number, race_arstmade);
 	}
 
@@ -152,7 +153,6 @@
 		$('#marker_' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
 			$(this).remove();
 		}).addClass(race_arstmade);
-		popMarker(mark_number);
 	}
 
 	// Used to format the timestamp NYC time, instead of the user's time zone
