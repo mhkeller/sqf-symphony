@@ -55,10 +55,6 @@
 	    .attr("height", height)
 	    .attr("class", "heat-map-box")
 
-	// svg.append("text")
-	//     .attr("transform", "translate(-6," + cellSize * 3.5 + ")rotate(-90)")
-	//     .style("text-anchor", "middle")
-	//     .text(function(d) { return d; });
 
 	var rect = svg.selectAll(".day")
 	    // .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
@@ -74,12 +70,6 @@
 
 	rect.append("title")
 	    .text(function(d) { return d; });
-
-	// svg.selectAll(".month")
-	//     .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
-	//   .enter().append("path")
-	//     .attr("class", function(d){ var mnth = String(d).split(' ')[1]; return 'month ' + mnth })
-	//     .attr("d", monthPath);
 
 	d3.csv("data/sqf_2011_day_counts.csv", function(error, csv) {
 	  var data = d3.nest()
@@ -101,8 +91,8 @@
 	});
 }
 
-$('.day').hover( function(e){
-	var title= $(this).children()[0];
+$('.day').mouseover( function(e){
+	var title = $(this).children()[0].textContent;
 	console.log(title)
 
 });
