@@ -24,6 +24,7 @@
 		sound_oY: null
 	}
 
+	// A function to boil down the multiple race categories to just a few
 	var mergeRaces = function(race){
 		if (race == 'B'){
 			// If Black return Black
@@ -81,6 +82,9 @@
 		// }
 	}
 
+	// Expands the marker
+	// You need the delay so that the CSS transition has something to transition *to*
+	// If you just add the class, it doesn't animate, it just takes the styles of that class
 	var popMarker = function(mark_number){
 		$('#marker_' + mark_number).delay(1)
 									.queue(function(n) {
@@ -98,6 +102,10 @@
 		source.noteOn(0);                          // play the source now
 	}
 
+	// Sets one of two possibilities
+	// If the person was arrested, it gives it a slower animation
+	// This is done for the circles slightly differently, it applies a different duration based on its arrested class
+	// TODO change the bar behavior to CSS transitions
 	var popBar = function(mark_number){
 		var $bar = $('#bar_' + mark_number)
 		if ($bar.hasClass('N')){
@@ -123,7 +131,6 @@
 		var arstmade = race_arstmade.substring(1,2);
 		var bar_div = '<div id="bar_'+mark_number+'" class="bar '+arstmade+'"></div>'
 		$('#col-'+race_arstmade+' .bar-container').append(bar_div);
-		popBar(mark_number);
 	}
 
 	var configData = function(sqf_incident){
@@ -144,18 +151,22 @@
 		addMarker(mark_number, lat, lng, race_arstmade);
 		popMarker(mark_number);
 		addBar(mark_number, race_arstmade);
+		popBar(mark_number);
 	}
 
 	var addMarker = function(mark_number, lat, lng, race_arstmade){
 		var center = new L.LatLng(lat, lng);
 		var marker = new L.CustomMarker(center);
 		map.addLayer(marker);
+
+		// This removes the marker when the CSS transition ends
 		$('#marker_' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
 			$(this).remove();
 		}).addClass(race_arstmade);
 	}
 
 	// Used to format the timestamp NYC time, instead of the user's time zone
+	// TODO I hear moment.js has an addon that handles timezomes, possibly called timezone.js
 	moment.fn.formatInZone = function(format, offset) {
    		return this.clone().utc().add('hours', offset).format(format);
 	}
@@ -362,6 +373,10 @@
 
 	// });
 
+
+	// Grab some data for the sunrise and sunset times for 2011
+	// This will switch the tile background from night to day
+	// TODO possibly a slower transition or a twilight tile
 	d3.csv('data/sunrise_sunset_clean.csv', function(times){
 		// Nest the entries by month
 		var nested_times = d3.nest()
@@ -401,12 +416,208 @@
 
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
+	// Day / night tiles
 	var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png';
 	var night_url = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/82102/256/{z}/{x}/{y}.png';
 	var day_layer   = new L.TileLayer(day_url,   {attribution:"Mapbox"});
 	var night_layer = new L.TileLayer(night_url, {attribution:"Mapbox"});
 
 	map.addLayer(night_layer);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	var DATA = {
+		max: null,
+		min: null
+	};
+
+	var SETTINGS = {
+		block_width: 34.6,
+		color_bins: 7
+	}
+
+	var width = 50,
+	    height = 65,
+	    cellSize = 8; // cell size
+
+	var day = d3.time.format("%w"),
+		month = d3.time.format("%m"),
+		// D3's %U formatter returns the week number of a given year
+		// we want the week number of a given month
+	    week = d3.time.format("%U"),
+	    day_of_the_month = d3.time.format('%e'),
+	    week_of_the_month = function(day_of_the_month){
+	    	var week_number = Math.ceil(day_of_the_month/7);
+	    	return week_number;
+	    },
+	    addCommas = function(nStr){
+    	    nStr += '';
+		    var x = nStr.split('.');
+		    var x1 = x[0];
+		    var x2 = x.length > 1 ? '.' + x[1] : '';
+		    var rgx = /(\d+)(\d{3})/;
+		    while (rgx.test(x1)) {
+		      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		    }
+		    return x1 + x2;
+	    }
+	    format = d3.time.format("%Y-%m-%d");
+
+	var color = d3.scale.linear()
+	    .domain([0, 3500])
+	    .range([1, SETTINGS.color_bins]);
+
+	function getCurrentClassListAddHighlight(d3_node){
+		// Traverse the svg tree to get the list of current classes
+		var classes = d3_node[0][0].className.animVal + ' highlighted';
+		return classes;
+	}
+	function getCurrentClassListRemoveHighlight(d3_node){
+		// Traverse the svg tree to get the list of current classes
+		var classes = d3_node[0][0].className.animVal;
+		var no_highlight = classes.replace(' highlighted','');
+		return no_highlight;
+	}
+
+
+	function plotMonth(month_key){
+		var svg = d3.select("#heat-map-"+month_key).selectAll("svg")
+		    .data([month_key])
+		    // .data(d3.range(2011, 2012))
+		  .enter().append("svg")
+		    .attr("width", width)
+		    .attr("height", height)
+		    .attr("class", "heat-map-box")
+
+
+		var rect = svg.selectAll(".day")
+		    // .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+		    .data(function(d) { return d3.time.days(new Date(2011, d, 1), new Date(2011, d + 1, 1)); })
+		  .enter().append("rect")
+		    .attr("class", "day")
+		    .attr("width", cellSize)
+		    .attr("height", cellSize)
+		    .attr("x", function(d) { return week(d) * cellSize - (month(d)-1)*SETTINGS.block_width; })
+		    // .attr("x", function(d) { return week_of_the_month(day_of_the_month(d)) * cellSize })
+		    .attr("y", function(d) { return day(d) * cellSize; })
+		    .datum(format)
+		    .on("mouseover", function(d){ d3.select(this).attr('class', getCurrentClassListAddHighlight(d3.select(this))); })
+		    .on("mouseout",  function(d){ d3.select(this).attr('class', getCurrentClassListRemoveHighlight(d3.select(this))) })
+		    .on("click", function(d){console.log(d) });
+
+		rect.append("title")
+		    .text(function(d) { return d; });
+
+		d3.csv("data/sqf_2011_day_counts.csv", function(error, csv) {
+		  var data = d3.nest()
+		    .key(function(d) { return '2011-' + d.monthstop + '-' + d.daystop; })
+		    .rollup(function(d) { return d[0].stop_counts; })
+		    .map(csv);
+
+		    var stop_array = [];
+		    csv.forEach(function(n){
+		    	stop_array.push(Number(n.stop_counts));
+		    });
+
+		  DATA.max = d3.max(stop_array);
+		  DATA.min = d3.min(stop_array);
+		  rect.filter(function(d) { return d in data; })
+		      .attr("class", function(d) { return "day box-" + Math.round(color(data[d])); })
+		    .select("title")
+		      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; });
+		});
+	}
+
+	// Hack for plotting the months as separate svg elements
+	// so they can have spaces between them and be used as buttons
+	for (var i = 0; i < 12; i++){
+		plotMonth(i);
+	}
+
+	$('.day').mouseover( function(e){
+		var title = $(this).children()[0].textContent;
+		// console.log(title)
+		var node = $(this).children();
+		// console.log(node)
+
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	// Test
@@ -600,4 +811,5 @@
 	sound_oY_request.send();
 
 
-})();
+
+}).call(this);

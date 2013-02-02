@@ -331,6 +331,8 @@ body {
 .heat-map-box .box-2{fill:#225EA8;}
 .heat-map-box .box-1{fill:#0C2C84;}
 
+.heat-map-box .highlighted{fill:#B3E7FF;}
+
 .heat-map-container{
 	float:left;
 	width:15px;

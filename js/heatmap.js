@@ -97,4 +97,4 @@ $('.day').mouseover( function(e){
 
 });
 
-})();
+}).call(this);
