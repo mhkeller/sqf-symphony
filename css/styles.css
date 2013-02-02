@@ -97,6 +97,12 @@ html, body {
 	user-select: none;
 
 }
+.overlay-btn:hover{
+	text-decoration:underline;
+	color:#31D6EC;
+	cursor:pointer;
+	cursor:hand;
+}
 .overlay-btn:hover,.overlay-select:hover{
 /*	text-decoration:underline;
 	color:#31D6EC;
@@ -345,4 +351,19 @@ body {
 .heat-map-container{
 	float:left;
 	width:15px;
+}
+#heatmap-hover-window{
+	font-family: 'Droid Sans', sans-serif;
+	/*-webkit-font-smoothing: antialiased;*/
+	text-rendering:optimizeLegibility;
+	letter-spacing: 1px;
+	font-size:11px;
+	position:absolute;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,.8);
+	border-radius:2px;
+	z-index:9999;
+	color:white;
+	padding:3px 5px;
+	display:none;
 }

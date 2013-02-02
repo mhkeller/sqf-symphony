@@ -319,14 +319,10 @@
 		}else{
 			days = 31
 		}
-		console.log(days)
 
 		// I don't know why you need to subtract one for this to work
 		var start_date = new Date(2011, (month_id-1), 1).getTime()/1000;
 		var end_date   = new Date(2011, (month_id-1), days).getTime()/1000;
-
-		console.log(start_date)
-
 
 		$("#slider").slider('option',{min: start_date, max: end_date});
 		$("#slider").slider('value',start_date);
@@ -420,6 +416,13 @@
 		}
 	});
 
+	$('#animation-drawer').mousemove(function(e){
+		$('#heatmap-hover-window').css({
+			'top':e.pageY - 5,
+			'left':e.pageX + 25
+		})
+	})
+
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
 	// Day / night tiles
@@ -504,14 +507,12 @@
 	}
 	function extractMonthDay(d){
 		var month = d.substring(5,10)
-		console.log(month)
 		// return month
 	}
 	function jumpToDay(d){
 		var month = d.substring(5,7);
 		pullData(month);
 		var day = d.substring(8,10);
-		console.log(day)
 		resetSlider(Number(month))
 
 		var this_date = new Date(2011, (month-1), day).getTime()/1000;
@@ -520,6 +521,24 @@
 		playTimer();
 
 
+	}
+
+	function showHeatmapHoverInfo(d, data){
+		var $heat_vlt = $('#heatmap-hover-window');
+
+		var date = d;
+		var stops = data[d];
+		var moment_date = moment(d, 'YYY-MM-DD');
+		var pretty_date = moment_date.format('ddd, MMM Do')
+
+		// console.log(pretty_date, addCommas(stops),'stops')
+
+		$heat_vlt.html(pretty_date + ': ' + addCommas(stops) + ' stops')
+		$heat_vlt.show();
+	}
+
+	function hideHeatmapHover(){
+		$('#heatmap-hover-window').hide();
 	}
 
 
@@ -544,12 +563,12 @@
 		    // .attr("x", function(d) { return week_of_the_month(day_of_the_month(d)) * cellSize })
 		    .attr("y", function(d) { return day(d) * cellSize; })
 		    .datum(format)
-		    .on("mouseover", function(d){ d3.select(this).attr('class', getCurrentClassListAddHighlight(d3.select(this))); })
-		    .on("mouseout",  function(d){ d3.select(this).attr('class', getCurrentClassListRemoveHighlight(d3.select(this))) })
-		    .on("click", function(d){jumpToDay(d) });
+		    // .on("mouseover", function(d){  })
+		    // .on("mouseout",  function(d){  })
+		    .on("click", function(d){clearData();jumpToDay(d) });
 
-		rect.append("title")
-		    .text(function(d) { return d; });
+		// rect.append("title")
+		//     .text(function(d) { return d; });
 
 		d3.csv("data/sqf_2011_day_counts.csv", function(error, csv) {
 		  var data = d3.nest()
@@ -566,8 +585,10 @@
 		  DATA.min = d3.min(stop_array);
 		  rect.filter(function(d) { return d in data; })
 		      .attr("class", function(d) { return "day box-" + Math.round(color(data[d])); })
+		      .on('mouseover', function(d){showHeatmapHoverInfo(d,data);d3.select(this).attr('class', getCurrentClassListAddHighlight(d3.select(this)));})
+		      .on('mouseout', function(d){hideHeatmapHover();d3.select(this).attr('class', getCurrentClassListRemoveHighlight(d3.select(this)))})
 		    .select("title")
-		      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; });
+		      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; })
 		});
 	}
 
