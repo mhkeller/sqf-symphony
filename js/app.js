@@ -133,7 +133,7 @@
 		$('#col-'+race_arstmade+' .bar-container').append(bar_div);
 	}
 
-	var configData = function(sqf_incident){
+	var plotData = function(sqf_incident){
 		var mark_number = CONFIG.marker_number;
 		// If the stop has no lat/lng put it in New Jersey
 		if (sqf_incident.lat != 'NA'){
@@ -186,6 +186,40 @@
 			return -5
 		}
 	}
+
+
+	function figureOutHumanTimesFromUnix(ui_value){
+		var offset = calculateDayLightSavings(Number(ui_value))
+		// The human readable time at offset -5
+		// need to add support for daylight savings time
+		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY', offset);
+		var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
+		var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
+		var am_pm = moment(ui_value*1000).formatInZone('a', offset);
+
+		// The month, date and hour for the sunrise, sunset
+		var month = moment(ui_value*1000).formatInZone('M', offset);
+		var day = moment(ui_value*1000).formatInZone('D', offset);
+
+		var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+
+		// day-1 so that the day matches the node number
+		// a little hacky but avoids renesting the data
+		var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+
+		var today_sunrise = today_sunriseSunset.rise;
+		var today_sunset  = today_sunriseSunset.set;
+
+		// Check whether the sun has risen or set
+		sunTimes(time_string24h, today_sunrise, today_sunset);
+
+
+		$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+
+
+
+	}
+
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
     $( "#slider" ).slider({
 		// value: 1293858000,
@@ -198,41 +232,22 @@
 		},
 		change: function(event,ui){
 			//Programatically
+			figureOutHumanTimesFromUnix(ui.value)
 
-			var offset = calculateDayLightSavings(Number(ui.value))
-			// The human readable time at offset -5
-			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
-			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
-			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
-
-			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', offset);
-			var day = moment(ui.value*1000).formatInZone('D', offset);
-
-			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
-
-			// day-1 so that the day matches the node number
-			// a little hacky but avoids renesting the data
-			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
-
-			var today_sunrise = today_sunriseSunset.rise;
-			var today_sunset  = today_sunriseSunset.set;
-
-			// Check whether the sun has risen or set
-			sunTimes(time_string24h, today_sunrise, today_sunset);
-
-
-
-
-			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+			console.log($("#slider").slider("option","max"))
 
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
 				$.each(sqf_incident, function(key, value){
-					configData(value);
+					plotData(value);
 				})
+			}
+
+			// If it's the max, stop
+			// TODO set it to start playing the next month
+			if (ui.value == $("#slider").slider("option","max")){
+				clearData();
+
 			}
 
 
@@ -240,32 +255,34 @@
 		slide: function(event, ui) {
 			//manually
 
-			var offset = calculateDayLightSavings(Number(ui.value))
-			// The human readable time at offset -5
-			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
-			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
-			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
+			figureOutHumanTimesFromUnix(ui.value)
 
-			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', offset);
-			var day = moment(ui.value*1000).formatInZone('D', offset);
+			// var offset = calculateDayLightSavings(Number(ui.value))
+			// // The human readable time at offset -5
+			// // need to add support for daylight savings time
+			// var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
+			// var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
+			// var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
+			// var am_pm = moment(ui.value*1000).formatInZone('a', offset);
 
-			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+			// // The month, date and hour for the sunrise, sunset
+			// var month = moment(ui.value*1000).formatInZone('M', offset);
+			// var day = moment(ui.value*1000).formatInZone('D', offset);
 
-			// day-1 so that the day matches the node number
-			// a little hacky but avoids renesting the data
-			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+			// var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
 
-			var today_sunrise = today_sunriseSunset.rise;
-			var today_sunset  = today_sunriseSunset.set;
+			// // day-1 so that the day matches the node number
+			// // a little hacky but avoids renesting the data
+			// var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
 
-			// Check whether the sun has risen or set
-			sunTimes(time_string24h, today_sunrise, today_sunset);
+			// var today_sunrise = today_sunriseSunset.rise;
+			// var today_sunset  = today_sunriseSunset.set;
+
+			// // Check whether the sun has risen or set
+			// sunTimes(time_string24h, today_sunrise, today_sunset);
 
 
-			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+			// $('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
 
 		}
@@ -322,7 +339,7 @@
 
 		// I don't know why you need to subtract one for this to work
 		var start_date = new Date(2011, (month_id-1), 1).getTime()/1000;
-		var end_date   = new Date(2011, (month_id-1), days).getTime()/1000;
+		var end_date   = new Date(2011, (month_id-1), days, 23, 59, 59).getTime()/1000;
 
 		$("#slider").slider('option',{min: start_date, max: end_date});
 		$("#slider").slider('value',start_date);
