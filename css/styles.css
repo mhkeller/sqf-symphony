@@ -98,6 +98,12 @@ html, body {
 
 }
 .overlay-btn:hover,.overlay-select:hover{
+/*	text-decoration:underline;
+	color:#31D6EC;
+*/	cursor:pointer;
+	cursor:hand;
+}
+.month-select-text:hover{
 	text-decoration:underline;
 	color:#31D6EC;
 	cursor:pointer;
@@ -129,7 +135,7 @@ html, body {
 #play-btn{
 	display:none;
 	position: absolute;
-	top: 43px;
+	top: 89px;
 	width: 84px;
 	text-align: center;
 }
@@ -305,7 +311,10 @@ html, body {
 	margin-top: -8px;
 }
 .month-select-text{
-	margin-bottom:5px;
+	margin-bottom:12px;
+}
+.selector-pointer{
+	margin-bottom:7px;
 }
 body {
   shape-rendering: crispEdges;

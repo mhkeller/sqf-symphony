@@ -308,7 +308,6 @@
 		};
 		CONFIG.current_month_data = {};
 
-
 	}
 
 	var resetSlider = function(month_id){
@@ -320,10 +319,13 @@
 		}else{
 			days = 31
 		}
+		console.log(days)
 
+		// I don't know why you need to subtract one for this to work
 		var start_date = new Date(2011, (month_id-1), 1).getTime()/1000;
 		var end_date   = new Date(2011, (month_id-1), days).getTime()/1000;
 
+		console.log(start_date)
 
 
 		$("#slider").slider('option',{min: start_date, max: end_date});
@@ -338,17 +340,16 @@
 			    .entries(csv);
 
 			var time_array = [];
+
 			// Create a hash for this month's data that can be accessed
 			// via the unix_timestamp
 			nested.forEach(function(o){
 				var u_t = o.key;
 				CONFIG.current_month_data[u_t] = o.values;
 			});
-			resetSlider(Number(month_display));
 			// When done constructing the data, start playing
 			$('#play-btn').show();
 			$('#slider-container').show();
-			playTimer();
 
 
 		});
@@ -398,6 +399,11 @@
 			var month_display = $(this).attr('data-month-select');
 			clearData();
 			pullData(month_display);
+			resetSlider(Number(month_display));
+
+			// Play
+			playTimer();
+
 
 			// CSS
 			$('#animation-drawer .overlay-select').removeClass('selected');
@@ -480,8 +486,9 @@
 	    }
 	    format = d3.time.format("%Y-%m-%d");
 
+
 	var color = d3.scale.linear()
-	    .domain([0, 3500])
+	    .domain([0, 3500]) // Max of stops on a single day
 	    .range([1, SETTINGS.color_bins]);
 
 	function getCurrentClassListAddHighlight(d3_node){
@@ -494,6 +501,25 @@
 		var classes = d3_node[0][0].className.animVal;
 		var no_highlight = classes.replace(' highlighted','');
 		return no_highlight;
+	}
+	function extractMonthDay(d){
+		var month = d.substring(5,10)
+		console.log(month)
+		// return month
+	}
+	function jumpToDay(d){
+		var month = d.substring(5,7);
+		pullData(month);
+		var day = d.substring(8,10);
+		console.log(day)
+		resetSlider(Number(month))
+
+		var this_date = new Date(2011, (month-1), day).getTime()/1000;
+		// // Jump to day
+		$("#slider").slider('value',this_date);
+		playTimer();
+
+
 	}
 
 
@@ -520,7 +546,7 @@
 		    .datum(format)
 		    .on("mouseover", function(d){ d3.select(this).attr('class', getCurrentClassListAddHighlight(d3.select(this))); })
 		    .on("mouseout",  function(d){ d3.select(this).attr('class', getCurrentClassListRemoveHighlight(d3.select(this))) })
-		    .on("click", function(d){console.log(d) });
+		    .on("click", function(d){jumpToDay(d) });
 
 		rect.append("title")
 		    .text(function(d) { return d; });
@@ -551,13 +577,13 @@
 		plotMonth(i);
 	}
 
-	$('.day').mouseover( function(e){
-		var title = $(this).children()[0].textContent;
-		// console.log(title)
-		var node = $(this).children();
-		// console.log(node)
+	// $('.day').mouseover( function(e){
+	// 	var title = $(this).children()[0].textContent;
+	// 	// console.log(title)
+	// 	var node = $(this).children();
+	// 	// console.log(node)
 
-	});
+	// });
 
 
 
