@@ -234,20 +234,23 @@
 			//Programatically
 			figureOutHumanTimesFromUnix(ui.value)
 
-			console.log($("#slider").slider("option","max"))
-
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
 				$.each(sqf_incident, function(key, value){
 					plotData(value);
 				})
 			}
-
 			// If it's the max, stop
-			// TODO set it to start playing the next month
 			if (ui.value == $("#slider").slider("option","max")){
+				var month = moment(ui.value*1000).format('MM');
+				console.log(month);
 				clearData();
 
+				var month_display = String('0'+(Number(month)+1));
+				pullData(month_display);
+				resetSlider(Number(month_display));
+
+				playTimer();
 			}
 
 
@@ -547,8 +550,6 @@
 		var stops = data[d];
 		var moment_date = moment(d, 'YYY-MM-DD');
 		var pretty_date = moment_date.format('ddd, MMM Do')
-
-		// console.log(pretty_date, addCommas(stops),'stops')
 
 		$heat_vlt.html(pretty_date + ': ' + addCommas(stops) + ' stops')
 		$heat_vlt.show();
