@@ -24,6 +24,7 @@
 		sound_oY: null
 	}
 
+	// A function to boil down the multiple race categories to just a few
 	var mergeRaces = function(race){
 		if (race == 'B'){
 			// If Black return Black
@@ -81,6 +82,9 @@
 		// }
 	}
 
+	// Expands the marker
+	// You need the delay so that the CSS transition has something to transition *to*
+	// If you just add the class, it doesn't animate, it just takes the styles of that class
 	var popMarker = function(mark_number){
 		$('#marker_' + mark_number).delay(1)
 									.queue(function(n) {
@@ -98,6 +102,10 @@
 		source.noteOn(0);                          // play the source now
 	}
 
+	// Sets one of two possibilities
+	// If the person was arrested, it gives it a slower animation
+	// This is done for the circles slightly differently, it applies a different duration based on its arrested class
+	// TODO change the bar behavior to CSS transitions
 	var popBar = function(mark_number){
 		var $bar = $('#bar_' + mark_number)
 		if ($bar.hasClass('N')){
@@ -123,10 +131,9 @@
 		var arstmade = race_arstmade.substring(1,2);
 		var bar_div = '<div id="bar_'+mark_number+'" class="bar '+arstmade+'"></div>'
 		$('#col-'+race_arstmade+' .bar-container').append(bar_div);
-		popBar(mark_number);
 	}
 
-	var configData = function(sqf_incident){
+	var plotData = function(sqf_incident){
 		var mark_number = CONFIG.marker_number;
 		// If the stop has no lat/lng put it in New Jersey
 		if (sqf_incident.lat != 'NA'){
@@ -144,18 +151,22 @@
 		addMarker(mark_number, lat, lng, race_arstmade);
 		popMarker(mark_number);
 		addBar(mark_number, race_arstmade);
+		popBar(mark_number);
 	}
 
 	var addMarker = function(mark_number, lat, lng, race_arstmade){
 		var center = new L.LatLng(lat, lng);
 		var marker = new L.CustomMarker(center);
 		map.addLayer(marker);
+
+		// This removes the marker when the CSS transition ends
 		$('#marker_' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
 			$(this).remove();
 		}).addClass(race_arstmade);
 	}
 
 	// Used to format the timestamp NYC time, instead of the user's time zone
+	// TODO I hear moment.js has an addon that handles timezomes, possibly called timezone.js
 	moment.fn.formatInZone = function(format, offset) {
    		return this.clone().utc().add('hours', offset).format(format);
 	}
@@ -175,6 +186,40 @@
 			return -5
 		}
 	}
+
+
+	function figureOutHumanTimesFromUnix(ui_value){
+		var offset = calculateDayLightSavings(Number(ui_value))
+		// The human readable time at offset -5
+		// need to add support for daylight savings time
+		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY', offset);
+		var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
+		var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
+		var am_pm = moment(ui_value*1000).formatInZone('a', offset);
+
+		// The month, date and hour for the sunrise, sunset
+		var month = moment(ui_value*1000).formatInZone('M', offset);
+		var day = moment(ui_value*1000).formatInZone('D', offset);
+
+		var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+
+		// day-1 so that the day matches the node number
+		// a little hacky but avoids renesting the data
+		var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+
+		var today_sunrise = today_sunriseSunset.rise;
+		var today_sunset  = today_sunriseSunset.set;
+
+		// Check whether the sun has risen or set
+		sunTimes(time_string24h, today_sunrise, today_sunset);
+
+
+		$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+
+
+
+	}
+
 	// Starting Jan 1 2011 0:0:00, ending jan 31 2011 23:59:59
     $( "#slider" ).slider({
 		// value: 1293858000,
@@ -187,41 +232,25 @@
 		},
 		change: function(event,ui){
 			//Programatically
-
-			var offset = calculateDayLightSavings(Number(ui.value))
-			// The human readable time at offset -5
-			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
-			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
-			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
-
-			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', offset);
-			var day = moment(ui.value*1000).formatInZone('D', offset);
-
-			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
-
-			// day-1 so that the day matches the node number
-			// a little hacky but avoids renesting the data
-			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
-
-			var today_sunrise = today_sunriseSunset.rise;
-			var today_sunset  = today_sunriseSunset.set;
-
-			// Check whether the sun has risen or set
-			sunTimes(time_string24h, today_sunrise, today_sunset);
-
-
-
-
-			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+			figureOutHumanTimesFromUnix(ui.value)
 
 			if (CONFIG.current_month_data[ui.value]){
 				var sqf_incident = CONFIG.current_month_data[ui.value];
 				$.each(sqf_incident, function(key, value){
-					configData(value);
+					plotData(value);
 				})
+			}
+			// If it's the max, stop
+			if (ui.value == $("#slider").slider("option","max")){
+				var month = moment(ui.value*1000).format('MM');
+				console.log(month);
+				clearData();
+
+				var month_display = String('0'+(Number(month)+1));
+				pullData(month_display);
+				resetSlider(Number(month_display));
+
+				playTimer();
 			}
 
 
@@ -229,32 +258,34 @@
 		slide: function(event, ui) {
 			//manually
 
-			var offset = calculateDayLightSavings(Number(ui.value))
-			// The human readable time at offset -5
-			// need to add support for daylight savings time
-			var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
-			var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
-			var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
-			var am_pm = moment(ui.value*1000).formatInZone('a', offset);
+			figureOutHumanTimesFromUnix(ui.value)
 
-			// The month, date and hour for the sunrise, sunset
-			var month = moment(ui.value*1000).formatInZone('M', offset);
-			var day = moment(ui.value*1000).formatInZone('D', offset);
+			// var offset = calculateDayLightSavings(Number(ui.value))
+			// // The human readable time at offset -5
+			// // need to add support for daylight savings time
+			// var day_date_string = moment(ui.value*1000).formatInZone('ddd MMM D YYYY', offset);
+			// var time_string = moment(ui.value*1000).formatInZone('h:mm', offset);
+			// var time_string24h = moment(ui.value*1000).formatInZone('HH:mm', offset);
+			// var am_pm = moment(ui.value*1000).formatInZone('a', offset);
 
-			var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+			// // The month, date and hour for the sunrise, sunset
+			// var month = moment(ui.value*1000).formatInZone('M', offset);
+			// var day = moment(ui.value*1000).formatInZone('D', offset);
 
-			// day-1 so that the day matches the node number
-			// a little hacky but avoids renesting the data
-			var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+			// var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
 
-			var today_sunrise = today_sunriseSunset.rise;
-			var today_sunset  = today_sunriseSunset.set;
+			// // day-1 so that the day matches the node number
+			// // a little hacky but avoids renesting the data
+			// var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
 
-			// Check whether the sun has risen or set
-			sunTimes(time_string24h, today_sunrise, today_sunset);
+			// var today_sunrise = today_sunriseSunset.rise;
+			// var today_sunset  = today_sunriseSunset.set;
+
+			// // Check whether the sun has risen or set
+			// sunTimes(time_string24h, today_sunrise, today_sunset);
 
 
-			$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+			// $('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
 
 		}
@@ -297,7 +328,6 @@
 		};
 		CONFIG.current_month_data = {};
 
-
 	}
 
 	var resetSlider = function(month_id){
@@ -310,10 +340,9 @@
 			days = 31
 		}
 
+		// I don't know why you need to subtract one for this to work
 		var start_date = new Date(2011, (month_id-1), 1).getTime()/1000;
-		var end_date   = new Date(2011, (month_id-1), days).getTime()/1000;
-
-
+		var end_date   = new Date(2011, (month_id-1), days, 23, 59, 59).getTime()/1000;
 
 		$("#slider").slider('option',{min: start_date, max: end_date});
 		$("#slider").slider('value',start_date);
@@ -327,17 +356,16 @@
 			    .entries(csv);
 
 			var time_array = [];
+
 			// Create a hash for this month's data that can be accessed
 			// via the unix_timestamp
 			nested.forEach(function(o){
 				var u_t = o.key;
 				CONFIG.current_month_data[u_t] = o.values;
 			});
-			resetSlider(Number(month_display));
 			// When done constructing the data, start playing
 			$('#play-btn').show();
 			$('#slider-container').show();
-			playTimer();
 
 
 		});
@@ -362,6 +390,10 @@
 
 	// });
 
+
+	// Grab some data for the sunrise and sunset times for 2011
+	// This will switch the tile background from night to day
+	// TODO possibly a slower transition or a twilight tile
 	d3.csv('data/sunrise_sunset_clean.csv', function(times){
 		// Nest the entries by month
 		var nested_times = d3.nest()
@@ -383,6 +415,11 @@
 			var month_display = $(this).attr('data-month-select');
 			clearData();
 			pullData(month_display);
+			resetSlider(Number(month_display));
+
+			// Play
+			playTimer();
+
 
 			// CSS
 			$('#animation-drawer .overlay-select').removeClass('selected');
@@ -399,14 +436,253 @@
 		}
 	});
 
+	$('#animation-drawer').mousemove(function(e){
+		$('#heatmap-hover-window').css({
+			'top':e.pageY - 5,
+			'left':e.pageX + 25
+		})
+	})
+
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
+	// Day / night tiles
 	var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png';
 	var night_url = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/82102/256/{z}/{x}/{y}.png';
 	var day_layer   = new L.TileLayer(day_url,   {attribution:"Mapbox"});
 	var night_layer = new L.TileLayer(night_url, {attribution:"Mapbox"});
 
 	map.addLayer(night_layer);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	var DATA = {
+		max: null,
+		min: null
+	};
+
+	var SETTINGS = {
+		block_width: 34.6,
+		color_bins: 7
+	}
+
+	var width = 50,
+	    height = 65,
+	    cellSize = 8; // cell size
+
+	var day = d3.time.format("%w"),
+		month = d3.time.format("%m"),
+		// D3's %U formatter returns the week number of a given year
+		// we want the week number of a given month
+	    week = d3.time.format("%U"),
+	    day_of_the_month = d3.time.format('%e'),
+	    week_of_the_month = function(day_of_the_month){
+	    	var week_number = Math.ceil(day_of_the_month/7);
+	    	return week_number;
+	    },
+	    addCommas = function(nStr){
+    	    nStr += '';
+		    var x = nStr.split('.');
+		    var x1 = x[0];
+		    var x2 = x.length > 1 ? '.' + x[1] : '';
+		    var rgx = /(\d+)(\d{3})/;
+		    while (rgx.test(x1)) {
+		      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		    }
+		    return x1 + x2;
+	    }
+	    format = d3.time.format("%Y-%m-%d");
+
+
+	var color = d3.scale.linear()
+	    .domain([0, 3500]) // Max of stops on a single day
+	    .range([1, SETTINGS.color_bins]);
+
+	function getCurrentClassListAddHighlight(d3_node){
+		// Traverse the svg tree to get the list of current classes
+		var classes = d3_node[0][0].className.animVal + ' highlighted';
+		return classes;
+	}
+	function getCurrentClassListRemoveHighlight(d3_node){
+		// Traverse the svg tree to get the list of current classes
+		var classes = d3_node[0][0].className.animVal;
+		var no_highlight = classes.replace(' highlighted','');
+		return no_highlight;
+	}
+	function extractMonthDay(d){
+		var month = d.substring(5,10)
+		// return month
+	}
+	function jumpToDay(d){
+		var month = d.substring(5,7);
+		pullData(month);
+		var day = d.substring(8,10);
+		resetSlider(Number(month))
+
+		var this_date = new Date(2011, (month-1), day).getTime()/1000;
+		// // Jump to day
+		$("#slider").slider('value',this_date);
+		playTimer();
+
+
+	}
+
+	function showHeatmapHoverInfo(d, data){
+		var $heat_vlt = $('#heatmap-hover-window');
+
+		var date = d;
+		var stops = data[d];
+		var moment_date = moment(d, 'YYY-MM-DD');
+		var pretty_date = moment_date.format('ddd, MMM Do')
+
+		$heat_vlt.html(pretty_date + ': ' + addCommas(stops) + ' stops')
+		$heat_vlt.show();
+	}
+
+	function hideHeatmapHover(){
+		$('#heatmap-hover-window').hide();
+	}
+
+
+	function plotMonth(month_key){
+		var svg = d3.select("#heat-map-"+month_key).selectAll("svg")
+		    .data([month_key])
+		    // .data(d3.range(2011, 2012))
+		  .enter().append("svg")
+		    .attr("width", width)
+		    .attr("height", height)
+		    .attr("class", "heat-map-box")
+
+
+		var rect = svg.selectAll(".day")
+		    // .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+		    .data(function(d) { return d3.time.days(new Date(2011, d, 1), new Date(2011, d + 1, 1)); })
+		  .enter().append("rect")
+		    .attr("class", "day")
+		    .attr("width", cellSize)
+		    .attr("height", cellSize)
+		    .attr("x", function(d) { return week(d) * cellSize - (month(d)-1)*SETTINGS.block_width; })
+		    // .attr("x", function(d) { return week_of_the_month(day_of_the_month(d)) * cellSize })
+		    .attr("y", function(d) { return day(d) * cellSize; })
+		    .datum(format)
+		    // .on("mouseover", function(d){  })
+		    // .on("mouseout",  function(d){  })
+		    .on("click", function(d){clearData();jumpToDay(d) });
+
+		// rect.append("title")
+		//     .text(function(d) { return d; });
+
+		d3.csv("data/sqf_2011_day_counts.csv", function(error, csv) {
+		  var data = d3.nest()
+		    .key(function(d) { return '2011-' + d.monthstop + '-' + d.daystop; })
+		    .rollup(function(d) { return d[0].stop_counts; })
+		    .map(csv);
+
+		    var stop_array = [];
+		    csv.forEach(function(n){
+		    	stop_array.push(Number(n.stop_counts));
+		    });
+
+		  DATA.max = d3.max(stop_array);
+		  DATA.min = d3.min(stop_array);
+		  rect.filter(function(d) { return d in data; })
+		      .attr("class", function(d) { return "day box-" + Math.round(color(data[d])); })
+		      .on('mouseover', function(d){showHeatmapHoverInfo(d,data);d3.select(this).attr('class', getCurrentClassListAddHighlight(d3.select(this)));})
+		      .on('mouseout', function(d){hideHeatmapHover();d3.select(this).attr('class', getCurrentClassListRemoveHighlight(d3.select(this)))})
+		    .select("title")
+		      .text(function(d) { return d.replace('2011-0','').replace('2011-','').replace('-','/') + ": " + addCommas(data[d]) + ' stops'; })
+		});
+	}
+
+	// Hack for plotting the months as separate svg elements
+	// so they can have spaces between them and be used as buttons
+	for (var i = 0; i < 12; i++){
+		plotMonth(i);
+	}
+
+	// $('.day').mouseover( function(e){
+	// 	var title = $(this).children()[0].textContent;
+	// 	// console.log(title)
+	// 	var node = $(this).children();
+	// 	// console.log(node)
+
+	// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	// Test
@@ -600,4 +876,5 @@
 	sound_oY_request.send();
 
 
-})();
+
+}).call(this);
