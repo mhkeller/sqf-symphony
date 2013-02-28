@@ -108,29 +108,27 @@
 	// TODO change the bar behavior to CSS transitions
 	var popBar = function(mark_number){
 		var $bar = $('#bar_' + mark_number)
-		if ($bar.hasClass('N')){
-			$bar.animate({
-				height: "20px"
-			},20, function(){
-				$(this).fadeOut(function(){
-					$(this).remove();
-				});
-			});
-		}else{
-			$bar.animate({
-				height: "20px"
-			},500, function(){
-				$(this).delay(600).fadeOut(800,function(){
-					$(this).remove();
-				});
-			});
-		}
+		// if ($bar.hasClass('N')){
+			$bar.css({'height':'2px','position':'absolute'}).animate({
+				'top':'575'
+			}, 5000, 'easeInQuint', function(){
+				$(this).remove();
+			})
+		// }else{
+		// 	$bar.animate({
+		// 		height: "20px"
+		// 	},500, function(){
+		// 		$(this).delay(600).fadeOut(800,function(){
+		// 			$(this).remove();
+		// 		});
+		// 	});
+		// }
 	}
 
 	var addBar = function(mark_number, race_arstmade){
 		var arstmade = race_arstmade.substring(1,2);
 		var bar_div = '<div id="bar_'+mark_number+'" class="bar '+arstmade+'"></div>'
-		$('#col-'+race_arstmade+' .bar-container').append(bar_div);
+		$('#col-'+race_arstmade+' .bar-container').prepend(bar_div);
 	}
 
 	var plotData = function(sqf_incident){
