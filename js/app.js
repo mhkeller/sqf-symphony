@@ -195,7 +195,7 @@
 		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY h:mm a z', offset);
 		var nd = moment(ui_value*1000).tz("America/New_York").format("MMM D, YYYY h:mm a z")
 
-		console.log(day_date_string, nd)
+		console.log(ui_value*1000, day_date_string, nd);
 		// var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
 		// var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
 		// var am_pm = moment(ui_value*1000).formatInZone('a', offset);
@@ -444,7 +444,9 @@
 			'top':e.pageY - 5,
 			'left':e.pageX + 25
 		})
-	})
+	});
+
+
 
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
@@ -457,7 +459,25 @@
 	map.addLayer(night_layer);
 
 
+	initOverlays();
 
+	function initOverlays(){
+	  	var center = new L.LatLng(CONFIG.na_lat, CONFIG.na_lng);
+		var marker = new L.CustomMarker(center);
+		map.addLayer(marker);
+
+
+		var c = '<div class="na-text">non-geotagged stops</div>';
+		
+		$('#marker_1').css({
+			'width':'75px',
+			'height': '75px',
+			'border': '4px solid #31D6EC',
+			'background-color': 'transparent',
+			'border-radius':'0',
+			'opacity':'.35'
+		}).html(c).removeClass('leaflet-marker-custom').removeClass('leaflet-clickable');
+	}
 
 
 
@@ -689,12 +709,13 @@
 	// Test
 	$(document).keyup(function(e) {
 	  if (e.keyCode == 27){
-	  	map.removeLayer(day_layer);
-	  	map.addLayer(night_layer);
-		// $('.leaflet-marker-custom').addClass('expand-marker').css({
-		// 	'margin-top': '-=' + CONFIG.marker_width/2 + 'px!important',
-		// 	'margin-left': '-=' + CONFIG.marker_width/2 + 'px!important'
-		// });
+	  	console.log('there')
+	  	// map.removeLayer(day_layer);
+	  	// map.addLayer(night_layer);
+
+
+
+
 	  }
 	});
 

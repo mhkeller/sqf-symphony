@@ -58,7 +58,6 @@ html, body {
 	height:0px;
 	margin-top:0px;
 	margin-left:0px;
-	background-color:red;
 	border-radius:50%;
 	transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
 	-moz-transition:  height .8s, width .8s, margin-top .8s, margin-left .8s, opacity .8s;
@@ -366,4 +365,14 @@ body {
 	color:white;
 	padding:3px 5px;
 	display:none;
+}
+.na-text{
+	position: absolute;
+	top: -14px;
+	left: -4px;
+	width: 100px;
+	font-style: italic;
+	font-family: 'Droid Sans', sans-serif;
+	font-size:9px;
+	color:white;
 }
