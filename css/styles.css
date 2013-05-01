@@ -382,3 +382,6 @@ body {
 	color:black;
 	background-color:white;
 }
+.ui-slider-handle {
+    outline: none !important;
+}

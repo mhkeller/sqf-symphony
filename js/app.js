@@ -198,9 +198,7 @@
 
 
 		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY', offset);
-		var ds = moment(ui_value*1000).formatInZone('ddd MMM D YYYY h:mm a', offset);
 
-		console.log(ds);
 		var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
 		var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
 		var am_pm = moment(ui_value*1000).formatInZone('a', offset);
