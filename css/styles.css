@@ -115,7 +115,8 @@ html, body {
 	cursor:hand;
 }
 .overlay-select:hover{
-	background-color:rgba(255, 250, 209, .75)
+	background-color:rgba(255, 250, 209, .75);
+	background-color:rgb(255, 250, 209);
 }
 .overlay-select.selected{
 	font-weight:bold;
@@ -317,6 +318,7 @@ html, body {
 }
 .month-select-text{
 	margin-bottom:12px;
+	text-decoration: underline;
 }
 .selector-pointer{
 	margin-bottom:7px;
@@ -370,9 +372,10 @@ body {
 	position: absolute;
 	top: -14px;
 	left: -4px;
-	width: 100px;
+	width: 90px;
 	font-style: italic;
 	font-family: 'Droid Sans', sans-serif;
 	font-size:9px;
-	color:white;
+	color:black;
+	background-color:white;
 }

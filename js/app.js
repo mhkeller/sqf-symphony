@@ -1,6 +1,6 @@
 (function(){
 	var CONFIG = {
-		marker_number: 1,
+		marker_number: 2,
 		marker_width: 80,
 		animation_speed: 50,
 		current_month_data: {},
@@ -467,7 +467,10 @@
 	initOverlays();
 
 	function initOverlays(){
-	  	var center = new L.LatLng(CONFIG.na_lat, CONFIG.na_lng);
+		var adj_lat = CONFIG.na_lat - .045,
+			adj_lng = CONFIG.na_lng - .058;
+
+	  	var center = new L.LatLng(adj_lat, adj_lng);
 		var marker = new L.CustomMarker(center);
 		map.addLayer(marker);
 
@@ -475,9 +478,9 @@
 		var c = '<div class="na-text">non-geotagged stops</div>';
 		
 		$('#marker_1').css({
-			'width':'75px',
-			'height': '75px',
-			'border': '4px solid #31D6EC',
+			'width':'80px',
+			'height': '80px',
+			'border': '3px dashed #31D6EC',
 			'background-color': 'transparent',
 			'border-radius':'0',
 			'opacity':'.35'
