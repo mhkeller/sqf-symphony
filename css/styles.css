@@ -114,14 +114,16 @@ html, body {
 	cursor:pointer;
 	cursor:hand;
 }
-.overlay-select:hover{
+.overlay-select:hover, .overlay-select.selected{
 	background-color:rgba(255, 250, 209, .75);
 	background-color:rgb(255, 250, 209);
+	/*color:#31D6EC;*/
 }
+
 .overlay-select.selected{
-	font-weight:bold;
 	color:#31D6EC;
 }
+
 .overlay-select.selected:hover{
 	cursor:default;
 	text-decoration: none;
@@ -283,7 +285,7 @@ html, body {
 	float: left;
 	text-align: center;
 	font-size: 19px;
-	margin-left: 44px;
+	margin-left: 26px;
 	margin-top: 20px;
 }
 .time{
@@ -321,7 +323,8 @@ html, body {
 	text-decoration: underline;
 }
 .selector-pointer{
-	margin-bottom:7px;
+	margin-bottom:3px;
+	font-weight: bold;
 }
 body {
   shape-rendering: crispEdges;

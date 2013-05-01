@@ -416,11 +416,16 @@
 
 	});
 
+	$('#animation-drawer').on('click', '.month-select', function(){
+		$('#animation-drawer .overlay-select').removeClass('selected');
+		$(this).addClass('selected');
+	});
+
 	$('#animation-drawer').on('click', '.month-select-text', function(){
 
 		// Only fire if it isn't already selected
 		if (!$(this).hasClass('selected')) {
-			var month_display = $(this).attr('data-month-select');
+						var month_display = $(this).attr('data-month-select');
 			clearData();
 			pullData(month_display);
 			resetSlider(Number(month_display));
@@ -430,8 +435,8 @@
 
 
 			// CSS
-			$('#animation-drawer .overlay-select').removeClass('selected');
-			$(this).addClass('selected');
+			// $('#animation-drawer .overlay-select').removeClass('selected');
+			// $(this).parent().addClass('selected');
 
    		}
 	});
@@ -612,7 +617,7 @@
 		    .datum(format)
 		    // .on("mouseover", function(d){  })
 		    // .on("mouseout",  function(d){  })
-		    .on("click", function(d){clearData();jumpToDay(d) });
+		    .on("click", function(d){clearData();jumpToDay(d)});
 
 		// rect.append("title")
 		//     .text(function(d) { return d; });
