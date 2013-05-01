@@ -178,12 +178,16 @@
 		// 2am Nov 6, 2011, NYC Time
 		var GMT_end_daylightsavings = 1320562800;
 
+		var d = new Date()
+		var o = d.getTimezoneOffset()/60*-1;
+
+
 		if (unix_timestamp < GMT_begin_daylightsavings){
-			return -5
+			return o-1
 		}else if (unix_timestamp < GMT_end_daylightsavings){
-			return -4
+			return o
 		}else{
-			return -5
+			return o-1
 		}
 	}
 
@@ -192,32 +196,33 @@
 		// calculate the GMT offset based on whether daylight savings is in effect
 		var offset = calculateDayLightSavings(Number(ui_value));
 
-		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY h:mm a z', offset);
-		var nd = moment(ui_value*1000).tz("America/New_York").format("MMM D, YYYY h:mm a z")
 
-		console.log(ui_value*1000, day_date_string, nd);
-		// var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
-		// var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
-		// var am_pm = moment(ui_value*1000).formatInZone('a', offset);
+		var day_date_string = moment(ui_value*1000).formatInZone('ddd MMM D YYYY', offset);
+		var ds = moment(ui_value*1000).formatInZone('ddd MMM D YYYY h:mm a z', offset);
 
-		// // The month, date and hour for the sunrise, sunset
-		// var month = moment(ui_value*1000).formatInZone('M', offset);
-		// var day = moment(ui_value*1000).formatInZone('D', offset);
+		console.log(ds);
+		var time_string = moment(ui_value*1000).formatInZone('h:mm', offset);
+		var time_string24h = moment(ui_value*1000).formatInZone('HH:mm', offset);
+		var am_pm = moment(ui_value*1000).formatInZone('a', offset);
 
-		// var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
+		// The month, date and hour for the sunrise, sunset
+		var month = moment(ui_value*1000).formatInZone('M', offset);
+		var day = moment(ui_value*1000).formatInZone('D', offset);
 
-		// // day-1 so that the day matches the node number
-		// // a little hacky but avoids renesting the data
-		// var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
+		var thisMonth_sunriseSunset = CONFIG.sunrise_sunset[month];
 
-		// var today_sunrise = today_sunriseSunset.rise;
-		// var today_sunset  = today_sunriseSunset.set;
+		// day-1 so that the day matches the node number
+		// a little hacky but avoids renesting the data
+		var today_sunriseSunset = CONFIG.sunrise_sunset[month][day-1];
 
-		// // Check whether the sun has risen or set
-		// sunTimes(time_string24h, today_sunrise, today_sunset);
+		var today_sunrise = today_sunriseSunset.rise;
+		var today_sunset  = today_sunriseSunset.set;
+
+		// Check whether the sun has risen or set
+		sunTimes(time_string24h, today_sunrise, today_sunset);
 
 
-		// $('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
+		$('#time-display').html(day_date_string + '<br/><span class="time">' + time_string +'<span class="am_pm">' + am_pm + '</span>'+ '</span>');
 
 
 
