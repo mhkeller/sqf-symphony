@@ -478,16 +478,16 @@
 		map.addLayer(marker);
 
 
-		var c = '<div class="na-text">non-geotagged stops</div>';
+		// var c = '<div class="na-text">non-geotagged stops</div>';
 		
-		$('#marker_1').css({
-			'width':'80px',
-			'height': '80px',
-			'border': '3px dashed #31D6EC',
-			'background-color': 'transparent',
-			'border-radius':'0',
-			'opacity':'.35'
-		}).html(c).removeClass('leaflet-marker-custom').removeClass('leaflet-clickable');
+		// $('#marker_1').css({
+		// 	'width':'80px',
+		// 	'height': '80px',
+		// 	'border': '3px dashed #31D6EC',
+		// 	'background-color': 'transparent',
+		// 	'border-radius':'0',
+		// 	'opacity':'.35'
+		// }).html(c).removeClass('leaflet-marker-custom').removeClass('leaflet-clickable');
 	}
 
 
