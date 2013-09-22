@@ -86,7 +86,7 @@
 	// You need the delay so that the CSS transition has something to transition *to*
 	// If you just add the class, it doesn't animate, it just takes the styles of that class
 	var popMarker = function(mark_number){
-		$('#marker_' + mark_number).delay(1)
+		$('.marker-' + mark_number).delay(1)
 									.queue(function(n) {
 										$(this).addClass('expand-marker');
 										n();
@@ -156,11 +156,12 @@
 
 	var addMarker = function(mark_number, lat, lng, race_arstmade){
 		var center = new L.LatLng(lat, lng);
-		var marker = new L.CustomMarker(center);
+    var marker_class = L.divIcon({className: 'leaflet-marker-custom marker-' + mark_number});
+		var marker = L.marker(center, {icon: marker_class});
 		map.addLayer(marker);
 
 		// This removes the marker when the CSS transition ends
-		$('#marker_' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
+		$('.marker-' + mark_number).bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
 			$(this).remove();
 		}).addClass(race_arstmade);
 	}
@@ -423,7 +424,7 @@
 
 		// Only fire if it isn't already selected
 		if (!$(this).hasClass('selected')) {
-						var month_display = $(this).attr('data-month-select');
+			var month_display = $(this).attr('data-month-select');
 			clearData();
 			pullData(month_display);
 			resetSlider(Number(month_display));
@@ -467,28 +468,28 @@
 	map.addLayer(night_layer);
 
 
-	initOverlays();
+	// initOverlays();
 
-	function initOverlays(){
-		var adj_lat = CONFIG.na_lat - .045,
-			adj_lng = CONFIG.na_lng - .058;
+	// function initOverlays(){
+	// 	var adj_lat = CONFIG.na_lat - .045,
+	// 		adj_lng = CONFIG.na_lng - .058;
 
-	  	var center = new L.LatLng(adj_lat, adj_lng);
-		var marker = new L.CustomMarker(center);
-		map.addLayer(marker);
+	//  //  var center = new L.LatLng(adj_lat, adj_lng);
+	// 	// var marker = new L.CustomMarker(center);
+	// 	// map.addLayer(marker);
 
 
-		// var c = '<div class="na-text">non-geotagged stops</div>';
+	// 	// var c = '<div class="na-text">non-geotagged stops</div>';
 		
-		// $('#marker_1').css({
-		// 	'width':'80px',
-		// 	'height': '80px',
-		// 	'border': '3px dashed #31D6EC',
-		// 	'background-color': 'transparent',
-		// 	'border-radius':'0',
-		// 	'opacity':'.35'
-		// }).html(c).removeClass('leaflet-marker-custom').removeClass('leaflet-clickable');
-	}
+	// 	// $('#marker_1').css({
+	// 	// 	'width':'80px',
+	// 	// 	'height': '80px',
+	// 	// 	'border': '3px dashed #31D6EC',
+	// 	// 	'background-color': 'transparent',
+	// 	// 	'border-radius':'0',
+	// 	// 	'opacity':'.35'
+	// 	// }).html(c).removeClass('leaflet-marker-custom').removeClass('leaflet-clickable');
+	// }
 
 
 
