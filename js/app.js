@@ -460,7 +460,8 @@
 	var map = new L.Map('map-canvas').setView(new L.LatLng(CONFIG.start_lat, CONFIG.start_lng), CONFIG.start_zoom);
 
 	// Day / night tiles
-	var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png';
+	// var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/48535/256/{z}/{x}/{y}.png';
+	var day_url   = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/90875/256/{z}/{x}/{y}.png';
 	var night_url = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/82102/256/{z}/{x}/{y}.png';
 	var day_layer   = new L.TileLayer(day_url,   {attribution:"Mapbox"});
 	var night_layer = new L.TileLayer(night_url, {attribution:"Mapbox"});
